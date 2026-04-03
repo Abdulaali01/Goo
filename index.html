@@ -1,1 +1,188 @@
 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>تحليل الأحياء - البلديات</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+body{margin:0;font-family:tahoma;background:#f5f7fb}
+
+.top{
+padding:10px;background:#fff;display:flex;gap:10px;flex-wrap:wrap;
+box-shadow:0 3px 10px rgba(0,0,0,.2)
+}
+
+.map{height:70vh}
+
+.box{padding:10px}
+
+.map-label{
+background:#fff;padding:5px 10px;border-radius:15px;
+font-weight:bold;border:2px solid #333
+}
+</style>
+</head>
+
+<body>
+
+<div class="top">
+<input type="file" id="file">
+<button onclick="loadExcel()">رفع Excel</button>
+
+<select id="muniFilter" onchange="filterData()">
+<option value="all">كل البلديات</option>
+</select>
+</div>
+
+<div id="map" class="map"></div>
+
+<div class="box">
+<canvas id="chart"></canvas>
+</div>
+
+<script>
+
+let map = L.map('map').setView([21.4,40.4],10);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+let raw = [];
+let visible = [];
+let polygons=[], labels=[];
+let chart;
+
+const colors=["red","blue","green","orange","purple","brown"];
+
+function loadExcel(){
+let f=document.getElementById("file").files[0];
+let reader=new FileReader();
+
+reader.onload=e=>{
+let wb=XLSX.read(e.target.result,{type:"binary"});
+let rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1});
+
+raw=[];
+let muniSet=new Set();
+
+for(let i=1;i<rows.length;i++){
+let r=rows[i];
+if(!r)continue;
+
+let lng=parseFloat(r[0]);
+let lat=parseFloat(r[1]);
+let name=r[2];
+let muni=r[3];
+
+if(isNaN(lat)||isNaN(lng))continue;
+
+raw.push({lat,lng,name,muni});
+muniSet.add(muni);
+}
+
+let sel=document.getElementById("muniFilter");
+sel.innerHTML='<option value="all">كل البلديات</option>';
+muniSet.forEach(m=>sel.innerHTML+=`<option>${m}</option>`);
+
+filterData();
+}
+
+reader.readAsBinaryString(f);
+}
+
+function filterData(){
+let m=document.getElementById("muniFilter").value;
+
+visible=raw.filter(d=>m==="all"||d.muni===m);
+
+draw();
+drawChart();
+}
+
+function draw(){
+polygons.forEach(p=>map.removeLayer(p));
+labels.forEach(l=>map.removeLayer(l));
+polygons=[];labels=[];
+
+// 👇 تجميع البلديات
+let muniGroup={};
+
+visible.forEach(d=>{
+if(!muniGroup[d.muni]) muniGroup[d.muni]={points:[]};
+muniGroup[d.muni].points.push([d.lat,d.lng]);
+});
+
+// 👇 رسم مضلعات البلديات
+Object.keys(muniGroup).forEach((m,i)=>{
+
+let pts=muniGroup[m].points;
+
+let poly=L.polygon(pts,{
+color:colors[i%colors.length],
+fillOpacity:.3
+}).addTo(map);
+
+polygons.push(poly);
+
+// مركز
+let lat=pts.reduce((s,p)=>s+p[0],0)/pts.length;
+let lng=pts.reduce((s,p)=>s+p[1],0)/pts.length;
+
+let label=L.marker([lat,lng],{
+icon:L.divIcon({
+className:"",
+html:`<div class="map-label">${m}</div>`
+})
+}).addTo(map);
+
+labels.push(label);
+});
+
+// 👇 أسماء الأحياء
+visible.forEach(d=>{
+let label=L.marker([d.lat,d.lng],{
+icon:L.divIcon({
+className:"",
+html:`<div class="map-label">${d.name}</div>`
+})
+}).addTo(map);
+
+labels.push(label);
+});
+
+}
+
+function drawChart(){
+if(chart)chart.destroy();
+
+let count={};
+
+visible.forEach(d=>{
+if(!count[d.name])count[d.name]=0;
+count[d.name]++;
+});
+
+let names=Object.keys(count);
+let vals=Object.values(count);
+
+chart=new Chart(document.getElementById("chart"),{
+type:"bar",
+data:{
+labels:names,
+datasets:[{data:vals}]
+}
+});
+}
+
+</script>
+
+</body>
+</html>
