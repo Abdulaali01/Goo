@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تحليل الأحياء - نهائي</title>
+<title>تحليل البلديات - نهائي</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
@@ -251,7 +251,7 @@ body {
     text-align: center;
 }
 
-/* ✅ أنماط التصدير */
+/* أنماط التصدير */
 .export-container {
     width: 1920px !important;
     height: 980px !important;
@@ -408,23 +408,23 @@ body.exporting .main-container:not(.export-container) {
 <div class="top-bar">
     <input type="file" id="file" accept=".xlsx,.xls">
     <button onclick="loadExcel()">📁 رفع ملف Excel</button>
-    
+
     <select id="municipalityFilter" onchange="applyCurrentFilter()">
         <option value="all">🏛️ كل البلديات</option>
     </select>
-    
+
     <select id="dateFilter" onchange="applyCurrentFilter()">
         <option value="all">📅 كل الأشهر</option>
     </select>
-    
+
     <select id="filterSelect" onchange="applyCurrentFilter()">
         <option value="all">📊 الكل</option>
         <option value="5">⭐ أعلى 5</option>
         <option value="10">⭐ أعلى 10</option>
     </select>
-    
-    <input id="searchBox" placeholder="🔍 بحث عن حي..." oninput="applyCurrentFilter()">
-    
+
+    <input id="searchBox" placeholder="🔍 بحث عن بلدية..." oninput="applyCurrentFilter()">
+
     <button onclick="fitAll()">🌍 إظهار الكل</button>
     <button class="btn-export" onclick="exportSlide()">📸 تصدير للبور بوينت</button>
     <button onclick="exportExcel()">📊 Excel</button>
@@ -432,48 +432,48 @@ body.exporting .main-container:not(.export-container) {
 </div>
 
 <div class="main-container" id="captureArea">
-    
+
     <div class="map-wrapper" id="mapSection">
         <div id="map"></div>
-        
+
         <div class="custom-zoom">
             <button class="zoom-btn" onclick="map.zoomIn()">+</button>
             <button class="zoom-btn" onclick="map.zoomOut()">−</button>
         </div>
     </div>
-    
+
     <div class="stats-section" id="statsSection">
-        
+
         <div class="card">
             <div class="card-title">🎨 دليل الألوان</div>
             <div id="legendBox" class="legend-container"></div>
         </div>
-        
+
         <div class="card">
-            <div class="card-title">📊 توزيع التقارير بالأحياء</div>
+            <div class="card-title">📊 توزيع البلاغات بالبلديات</div>
             <div class="chart-container">
                 <canvas id="chart"></canvas>
             </div>
         </div>
-        
+
         <div class="card">
             <div class="card-title">📈 إحصائيات عامة</div>
             <div class="stat-item">
-                <span>إجمالي التقارير</span>
+                <span>إجمالي البلاغات</span>
                 <span class="stat-value" id="totalReports">0</span>
             </div>
             <div class="stat-item">
-                <span>عدد الأحياء</span>
+                <span>عدد البلديات</span>
                 <span class="stat-value" id="totalDistricts">0</span>
             </div>
             <div class="stat-item">
-                <span>الأعلى تقارير</span>
+                <span>الأعلى بلاغات</span>
                 <span class="stat-value" id="topDistrict">-</span>
             </div>
         </div>
-        
+
     </div>
-    
+
     <div class="stats-section" id="categorySection">
         <div class="card" style="grid-column: 1 / -1;">
             <div class="card-title">📊 توزيع التصنيفات</div>
@@ -482,7 +482,7 @@ body.exporting .main-container:not(.export-container) {
             </div>
         </div>
     </div>
-    
+
 </div>
 
 <script>
@@ -490,7 +490,7 @@ Chart.register(ChartDataLabels);
 
 let map, screenshoter;
 let polygons = [], labels = [];
-let rawDistricts = [], visibleDistricts = [];
+let rawDistricts = [], visibleMunicipalities = [];
 let chart = null, chart2 = null;
 let exportRows = [];
 let allMunicipalities = new Set();
@@ -531,7 +531,7 @@ function loadExcel() {
         alert('الرجاء اختيار ملف'); 
         return; 
     }
-    
+
     const reader = new FileReader();
     reader.onload = e => {
         const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
@@ -567,9 +567,9 @@ function processRows(rows) {
         if (!categoryData[category]) categoryData[category] = 0;
         categoryData[category]++;
 
-        let key = name + "||" + muni + "||" + date + "||" + i;
+        let key = muni + "||" + date + "||" + i;
         if (!mapData[key]) {
-            mapData[key] = { name, municipality: muni, date, points: [], categories: new Set() };
+            mapData[key] = { municipality: muni, date, points: [], categories: new Set() };
         }
         mapData[key].points.push({ lat, lng });
         mapData[key].categories.add(category);
@@ -578,12 +578,12 @@ function processRows(rows) {
     fillSelect("municipalityFilter", allMunicipalities);
     fillSelect("dateFilter", allDates);
 
+    // تجميع البيانات حسب البلدية فقط
     let mergedData = {};
     Object.values(mapData).forEach(d => {
-        let mergeKey = d.name + "||" + d.municipality;
+        let mergeKey = d.municipality;
         if (!mergedData[mergeKey]) {
             mergedData[mergeKey] = { 
-                name: d.name, 
                 municipality: d.municipality, 
                 date: d.date, 
                 points: [], 
@@ -607,7 +607,7 @@ function processRows(rows) {
     rawDistricts = Object.values(mergedData).map((d, i) => {
         let cLat = d.points.reduce((s, p) => s + p.lat, 0) / d.points.length;
         let cLng = d.points.reduce((s, p) => s + p.lng, 0) / d.points.length;
-        
+
         return {
             ...d,
             count: d.points.length,
@@ -620,10 +620,10 @@ function processRows(rows) {
 
     document.getElementById("totalReports").textContent = total;
     document.getElementById("totalDistricts").textContent = rawDistricts.length;
-    document.getElementById("topDistrict").textContent = rawDistricts[0]?.name || "-";
+    document.getElementById("topDistrict").textContent = rawDistricts[0]?.municipality || "-";
 
     applyCurrentFilter();
-    showNotification(`✅ تم تحميل ${total} تقرير من ${rawDistricts.length} حي`);
+    showNotification(`✅ تم تحميل ${total} بلاغ من ${rawDistricts.length} بلدية`);
 }
 
 function fillSelect(id, set) {
@@ -645,14 +645,14 @@ function applyCurrentFilter() {
     let arr = rawDistricts.filter(d =>
         (muni === "all" || d.municipality === muni) &&
         (date === "all" || d.date === date) &&
-        d.name.toLowerCase().includes(search)
+        d.municipality.toLowerCase().includes(search)
     );
 
     if (top === "5") arr = arr.slice(0, 5);
     if (top === "10") arr = arr.slice(0, 10);
 
-    visibleDistricts = arr;
-    
+    visibleMunicipalities = arr;
+
     updateCategoryData();
     draw();
     drawCategoryChart();
@@ -660,7 +660,7 @@ function applyCurrentFilter() {
 
 function updateCategoryData() {
     categoryData = {};
-    visibleDistricts.forEach(d => {
+    visibleMunicipalities.forEach(d => {
         d.categories.forEach(cat => {
             if (!categoryData[cat]) categoryData[cat] = 0;
             categoryData[cat]++;
@@ -668,56 +668,10 @@ function updateCategoryData() {
     });
 }
 
-function getMunicipalityGroups() {
-    let groups = {};
-
-    visibleDistricts.forEach(d => {
-        if (!groups[d.municipality]) {
-            groups[d.municipality] = {
-                name: d.municipality,
-                points: [],
-                totalCount: 0
-            };
-        }
-
-        groups[d.municipality].points.push(...d.points);
-        groups[d.municipality].totalCount += d.count;
-    });
-
-    return Object.values(groups).map((g, i) => {
-        let uniquePoints = [];
-        g.points.forEach(p => {
-            let exists = uniquePoints.some(up =>
-                Math.abs(up.lat - p.lat) < 0.0001 &&
-                Math.abs(up.lng - p.lng) < 0.0001
-            );
-            if (!exists) uniquePoints.push(p);
-        });
-
-        let centerLat = uniquePoints.length
-            ? uniquePoints.reduce((s, p) => s + p.lat, 0) / uniquePoints.length
-            : 21.4;
-        let centerLng = uniquePoints.length
-            ? uniquePoints.reduce((s, p) => s + p.lng, 0) / uniquePoints.length
-            : 40.4;
-
-        return {
-            ...g,
-            points: uniquePoints,
-            centerLat,
-            centerLng,
-            color: colors[i % colors.length],
-            uniqueId: i
-        };
-    }).filter(g => g.points.length > 0);
-}
-
 function draw() {
     clearMapLayers();
 
-    const municipalityGroups = getMunicipalityGroups();
-
-    municipalityGroups.forEach((m) => {
+    visibleMunicipalities.forEach((m) => {
         if (m.points.length >= 3) {
             let hull = convexHull(m.points);
 
@@ -744,15 +698,15 @@ function draw() {
             polygons.push(circle);
         }
 
+        // ✅ إخفاء اسم البلدية من المضلع - عرض العدد فقط
         let label = L.marker([m.centerLat, m.centerLng], {
             icon: L.divIcon({
                 className: 'custom-label',
                 html: `<div class="map-label-container" style="--district-color: ${m.color}; border-color: ${m.color};">
-                    <span class="map-label-name">🏛️ ${escapeHtml(m.name)}</span>
-                    <span class="map-label-count">${m.totalCount}</span>
+                    <span class="map-label-count">${m.count}</span>
                 </div>`,
                 iconSize: null,
-                iconAnchor: [50, 20]
+                iconAnchor: [20, 20]
             })
         }).addTo(map);
 
@@ -767,11 +721,11 @@ function draw() {
 function convexHull(points) {
     const pts = points.map(p => [p.lat, p.lng]);
     if (pts.length <= 3) return pts.map(p => ({ lat: p[0], lng: p[1] }));
-    
+
     pts.sort((a, b) => a[0] === b[0] ? a[1] - b[1] : a[0] - b[0]);
     const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
     const lower = [], upper = [];
-    
+
     for (const p of pts) {
         while (lower.length >= 2 && cross(lower[lower.length-2], lower[lower.length-1], p) <= 0) lower.pop();
         lower.push(p);
@@ -789,14 +743,15 @@ function convexHull(points) {
 function drawChart() {
     if (chart) chart.destroy();
     const ctx = document.getElementById("chart").getContext("2d");
-    
+
+    // ✅ عرض البلديات بدلاً من الأحياء
     chart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: visibleDistricts.map(d => d.name),
+            labels: visibleMunicipalities.map(d => d.municipality),
             datasets: [{
-                data: visibleDistricts.map(d => d.count),
-                backgroundColor: visibleDistricts.map(d => d.color),
+                data: visibleMunicipalities.map(d => d.count),
+                backgroundColor: visibleMunicipalities.map(d => d.color),
                 borderRadius: 10,
                 borderSkipped: false,
             }]
@@ -833,10 +788,10 @@ function drawCategoryChart() {
     const ctx = document.getElementById("chart2").getContext("2d");
     const cats = Object.keys(categoryData);
     const vals = Object.values(categoryData);
-    
+
     const sorted = cats.map((cat, i) => ({ cat, val: vals[i], color: colors[i % colors.length] }))
                        .sort((a, b) => b.val - a.val);
-    
+
     chart2 = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -880,29 +835,27 @@ function drawCategoryChart() {
 
 function buildLegend() {
     const container = document.getElementById("legendBox");
-    const municipalityGroups = getMunicipalityGroups().sort((a, b) => b.totalCount - a.totalCount);
-    
-    container.innerHTML = municipalityGroups.slice(0, 10).map((m, index) => `
-        <div class="legend-item" onclick="highlightMunicipality('${m.uniqueId}')" title="${escapeHtml(m.name)}">
+
+    container.innerHTML = visibleMunicipalities.slice(0, 10).map((m, index) => `
+        <div class="legend-item" onclick="highlightMunicipality('${m.uniqueId}')" title="${escapeHtml(m.municipality)}">
             <div class="legend-color-box" style="background: ${m.color};">${index + 1}</div>
-            <span class="legend-text">${escapeHtml(m.name)}</span>
-            <span class="legend-count">${m.totalCount}</span>
+            <span class="legend-text">${escapeHtml(m.municipality)}</span>
+            <span class="legend-count">${m.count}</span>
         </div>
     `).join("");
 }
 
 function highlightMunicipality(uniqueId) {
-    const municipality = getMunicipalityGroups().find(m => String(m.uniqueId) === String(uniqueId));
+    const municipality = visibleMunicipalities.find(m => String(m.uniqueId) === String(uniqueId));
     if (municipality) {
         map.flyTo([municipality.centerLat, municipality.centerLng], 13, { duration: 1.5 });
     }
 }
 
 function buildExport() {
-    exportRows = [["الحي", "البلدية", "التاريخ", "التصنيف", "عدد النقاط"]];
-    visibleDistricts.forEach(d => {
+    exportRows = [["البلدية", "التاريخ", "التصنيف", "عدد البلاغات"]];
+    visibleMunicipalities.forEach(d => {
         exportRows.push([
-            d.name,
             d.municipality,
             d.date,
             [...d.categories].join(", "),
@@ -918,59 +871,59 @@ function exportExcel() {
     }
     let ws = XLSX.utils.aoa_to_sheet(exportRows);
     let wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "الأحياء");
-    XLSX.writeFile(wb, "تحليل_الأحياء.xlsx");
+    XLSX.utils.book_append_sheet(wb, ws, "البلديات");
+    XLSX.writeFile(wb, "تحليل_البلديات.xlsx");
 }
 
 async function exportSlide() {
     showNotification('⏳ جاري إعداد السلايد...');
-    
+
     try {
         document.body.classList.add('exporting');
-        
+
         const exportContainer = document.createElement('div');
         exportContainer.className = 'export-container';
         exportContainer.id = 'exportContainer';
-        
+
         const leftColumn = document.createElement('div');
         leftColumn.className = 'export-left';
-        
+
         const topRow = document.createElement('div');
         topRow.className = 'export-top-row';
-        
+
         const legendBox = document.createElement('div');
         legendBox.className = 'export-legend';
         legendBox.innerHTML = `
             <div class="card-title">🎨 دليل الألوان</div>
             <div class="legend-container" id="exportLegend"></div>
         `;
-        
+
         const chartStatsBox = document.createElement('div');
         chartStatsBox.className = 'export-chart-stats';
         chartStatsBox.innerHTML = `
-            <div class="card-title">📊 توزيع التقارير بالأحياء</div>
+            <div class="card-title">📊 توزيع البلاغات بالبلديات</div>
             <div class="chart-area">
                 <canvas id="exportChart"></canvas>
             </div>
             <div class="stats-area">
                 <div class="stat-box">
-                    <div class="stat-label">إجمالي التقارير</div>
+                    <div class="stat-label">إجمالي البلاغات</div>
                     <div class="stat-value" id="exportTotalReports">0</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-label">عدد الأحياء</div>
+                    <div class="stat-label">عدد البلديات</div>
                     <div class="stat-value" id="exportTotalDistricts">0</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-label">الأعلى تقارير</div>
+                    <div class="stat-label">الأعلى بلاغات</div>
                     <div class="stat-value" id="exportTopDistrict">-</div>
                 </div>
             </div>
         `;
-        
+
         topRow.appendChild(legendBox);
         topRow.appendChild(chartStatsBox);
-        
+
         const categoriesBox = document.createElement('div');
         categoriesBox.className = 'export-categories';
         categoriesBox.innerHTML = `
@@ -979,40 +932,38 @@ async function exportSlide() {
                 <canvas id="exportChart2"></canvas>
             </div>
         `;
-        
+
         leftColumn.appendChild(topRow);
         leftColumn.appendChild(categoriesBox);
-        
+
         const mapBox = document.createElement('div');
         mapBox.className = 'export-map';
         mapBox.innerHTML = '<div id="mapExport"></div>';
-        
+
         exportContainer.appendChild(leftColumn);
         exportContainer.appendChild(mapBox);
         document.body.appendChild(exportContainer);
-        
+
         document.getElementById('exportTotalReports').textContent = document.getElementById('totalReports').textContent;
         document.getElementById('exportTotalDistricts').textContent = document.getElementById('totalDistricts').textContent;
         document.getElementById('exportTopDistrict').textContent = document.getElementById('topDistrict').textContent;
-        
+
         document.getElementById('exportLegend').innerHTML = document.getElementById('legendBox').innerHTML;
-        
+
         await new Promise(resolve => setTimeout(resolve, 300));
-        
+
         const exportMap = L.map('mapExport', {
             zoomControl: false,
             attributionControl: false,
             preferCanvas: true
         }).setView(map.getCenter(), map.getZoom());
-        
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             crossOrigin: true
         }).addTo(exportMap);
-        
-        const municipalityGroups = getMunicipalityGroups();
-        
-        municipalityGroups.forEach((m) => {
+
+        visibleMunicipalities.forEach((m) => {
             if (m.points.length >= 3) {
                 let hull = convexHull(m.points);
 
@@ -1032,24 +983,24 @@ async function exportSlide() {
                 }).addTo(exportMap);
             }
 
+            // ✅ إخفاء اسم البلدية من التصدير أيضاً
             L.marker([m.centerLat, m.centerLng], {
                 icon: L.divIcon({
                     className: 'custom-label',
                     html: `<div class="map-label-container" style="--district-color: ${m.color}; border-color: ${m.color};">
-                        <span class="map-label-name">🏛️ ${escapeHtml(m.name)}</span>
-                        <span class="map-label-count">${m.totalCount}</span>
+                        <span class="map-label-count">${m.count}</span>
                     </div>`,
                     iconSize: null,
-                    iconAnchor: [50, 20]
+                    iconAnchor: [20, 20]
                 })
             }).addTo(exportMap);
         });
-        
+
         await new Promise(resolve => setTimeout(resolve, 1800));
-        
+
         drawExportCharts();
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         const canvas = await html2canvas(exportContainer, {
             width: 1920,
             height: 980,
@@ -1059,39 +1010,39 @@ async function exportSlide() {
             backgroundColor: '#667eea',
             logging: false
         });
-        
+
         const finalCanvas = document.createElement('canvas');
         const ctx = finalCanvas.getContext('2d');
-        
+
         finalCanvas.width = 1920;
         finalCanvas.height = 1080;
-        
+
         const gradient = ctx.createLinearGradient(0, 0, 0, 100);
         gradient.addColorStop(0, '#667eea');
         gradient.addColorStop(1, '#764ba2');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, 1920, 100);
-        
+
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 44px "Segoe UI", Tahoma, Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText('📊 تقرير تحليل البلديات', 960, 45);
-        
+
         ctx.font = 'bold 24px "Segoe UI", Tahoma, Arial';
         ctx.fillText(new Date().toLocaleDateString('ar-SA', { 
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
         }), 960, 75);
-        
+
         ctx.drawImage(canvas, 0, 100);
-        
+
         finalCanvas.toBlob(blob => {
             saveAs(blob, `تقرير_البلديات_${new Date().toLocaleDateString('ar-SA')}.png`);
             showNotification('✅ تم تصدير السلايد بنجاح!');
             document.body.classList.remove('exporting');
             exportContainer.remove();
         }, 'image/png');
-        
+
     } catch (err) {
         console.error(err);
         alert('حدث خطأ: ' + err.message);
@@ -1106,10 +1057,10 @@ function drawExportCharts() {
     new Chart(ctx1, {
         type: 'bar',
         data: {
-            labels: visibleDistricts.map(d => d.name),
+            labels: visibleMunicipalities.map(d => d.municipality),
             datasets: [{
-                data: visibleDistricts.map(d => d.count),
-                backgroundColor: visibleDistricts.map(d => d.color),
+                data: visibleMunicipalities.map(d => d.count),
+                backgroundColor: visibleMunicipalities.map(d => d.color),
                 borderRadius: 6,
                 borderSkipped: false,
             }]
@@ -1146,12 +1097,12 @@ function drawExportCharts() {
             }
         }
     });
-    
+
     const cats = Object.keys(categoryData);
     const vals = Object.values(categoryData);
     const sorted = cats.map((cat, i) => ({ cat, val: vals[i], color: colors[i % colors.length] }))
                        .sort((a, b) => b.val - a.val);
-    
+
     const ctx2 = document.getElementById('exportChart2').getContext('2d');
     new Chart(ctx2, {
         type: 'bar',
@@ -1195,11 +1146,10 @@ function drawExportCharts() {
 }
 
 function fitAll() {
-    const municipalityGroups = getMunicipalityGroups();
-    if (municipalityGroups.length === 0) return;
+    if (visibleMunicipalities.length === 0) return;
 
     let bounds = [];
-    municipalityGroups.forEach(m => m.points.forEach(p => bounds.push([p.lat, p.lng])));
+    visibleMunicipalities.forEach(m => m.points.forEach(p => bounds.push([p.lat, p.lng])));
     if (bounds.length) {
         map.fitBounds(bounds, { padding: [50, 50] });
     }
