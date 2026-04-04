@@ -63,7 +63,7 @@ body {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
 }
 
-/* ✅ تخطيط رئيسي: شريط جانبي + خريطة */
+/* ✅ تخطيط جديد: شريط جانبي + خريطة */
 .main-layout {
     margin-top: 80px;
     display: flex;
@@ -74,7 +74,7 @@ body {
 
 /* ✅ الشريط الجانبي (اليسار) - قائمة الرسوم البيانية */
 .sidebar-charts {
-    width: 380px;
+    width: 400px;
     flex-shrink: 0;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 20px;
@@ -200,7 +200,7 @@ body {
     border-bottom: 1px solid #e0e0e0;
 }
 
-/* ✅ الوسم على الخريطة */
+/* ✅ الوسم على الخريطة - اسم البلدية فقط بدون رقم */
 .map-label-container {
     background: rgba(255, 255, 255, 0.95);
     padding: 6px 12px;
@@ -250,12 +250,26 @@ body {
     overflow: hidden;
 }
 
+.export-legend .card-title {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+}
+
 .export-chart-stats {
     background: white;
     border-radius: 16px;
     padding: 15px;
     display: flex;
     flex-direction: column;
+}
+
+.export-chart-stats .card-title {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
 }
 
 .export-chart-stats .chart-area {
@@ -280,6 +294,18 @@ body {
     text-align: center;
 }
 
+.export-chart-stats .stat-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.export-chart-stats .stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: #667eea;
+}
+
 .export-categories {
     height: 45% !important;
     background: white;
@@ -287,6 +313,18 @@ body {
     padding: 15px;
     display: flex;
     flex-direction: column;
+}
+
+.export-categories .card-title {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+}
+
+.export-categories .chart-area {
+    flex: 1;
+    position: relative;
 }
 
 .export-map {
@@ -301,6 +339,15 @@ body {
 .export-map #mapExport {
     height: 100% !important;
     width: 100% !important;
+}
+
+.export-container .original-content {
+    display: none !important;
+}
+
+.export-container ~ .top-bar,
+.export-container ~ .custom-zoom {
+    display: none !important;
 }
 
 body.exporting {
@@ -356,7 +403,7 @@ body.exporting .main-layout {
     <button onclick="clearAllData()" style="background: #ff4757 !important;">🗑️ مسح</button>
 </div>
 
-<!-- ✅ التخطيط الجديد: شريط جانبي + خريطة -->
+<!-- ✅ تخطيط جديد: شريط جانبي + خريطة -->
 <div class="main-layout" id="mainLayout">
 
     <!-- ✅ الشريط الجانبي (اليسار) - قائمة الرسوم البيانية -->
@@ -383,12 +430,12 @@ Chart.register(ChartDataLabels);
 let map, screenshoter;
 let polygons = [], labels = [];
 let rawDistricts = [], visibleMunicipalities = [];
-let sidebarCharts = {};
+let sidebarCharts = {}; // ✅ لتخزين رسوم الشريط الجانبي
 let exportRows = [];
 let allMunicipalities = new Set();
 let allDates = new Set();
 let categoryData = {};
-let rawData = {};
+let rawData = {}; // ✅ لتخزين بيانات الأحياء
 
 const colors = [
     "#e74c3c", "#e67e22", "#f39c12", "#27ae60", "#16a085",
@@ -439,7 +486,7 @@ function processRows(rows) {
     allMunicipalities.clear();
     allDates.clear();
     categoryData = {};
-    rawData = {};
+    rawData = {}; // ✅ إعادة تعيين
 
     for (let i = 1; i < rows.length; i++) {
         let r = rows[i];
@@ -447,7 +494,7 @@ function processRows(rows) {
 
         let lng = parseFloat(r[0]);
         let lat = parseFloat(r[1]);
-        let districtName = String(r[2] || "غير معروف").trim();
+        let districtName = String(r[2] || "غير معروف").trim(); // ✅ اسم الحي
         let muni = String(r[3] || "غير محدد").trim();
         let date = String(r[4] || "غير معروف").trim();
         let category = String(r[5] || "غير محدد").trim();
@@ -461,6 +508,7 @@ function processRows(rows) {
         if (!categoryData[category]) categoryData[category] = 0;
         categoryData[category]++;
 
+        // ✅ تجميع البيانات حسب البلدية والحي
         if (!rawData[muni]) {
             rawData[muni] = {};
         }
@@ -487,6 +535,7 @@ function processRows(rows) {
     fillSelect("municipalityFilter", allMunicipalities);
     fillSelect("dateFilter", allDates);
 
+    // تجميع البيانات حسب البلدية فقط
     let mergedData = {};
     Object.values(mapData).forEach(d => {
         let mergeKey = d.municipality;
@@ -526,6 +575,10 @@ function processRows(rows) {
         };
     }).sort((a, b) => b.count - a.count);
 
+    document.getElementById("totalReports").textContent = total;
+    document.getElementById("totalDistricts").textContent = rawDistricts.length;
+    document.getElementById("topDistrict").textContent = rawDistricts[0]?.municipality || "-";
+
     applyCurrentFilter();
     showNotification(`✅ تم تحميل ${total} بلاغ من ${rawDistricts.length} بلدية`);
 }
@@ -559,7 +612,7 @@ function applyCurrentFilter() {
 
     updateCategoryData();
     draw();
-    drawSidebarCharts();
+    drawSidebarCharts(); // ✅ رسم رسوم الشريط الجانبي
 }
 
 function updateCategoryData() {
@@ -572,17 +625,21 @@ function updateCategoryData() {
     });
 }
 
+// ✅ دالة جديدة: رسم رسوم بيانية في الشريط الجانبي
 function drawSidebarCharts() {
+    // تدمير الرسوم السابقة
     Object.values(sidebarCharts).forEach(c => c.destroy());
     sidebarCharts = {};
     
     const container = document.getElementById('sidebarCharts');
+    // إبقاء العنوان فقط
     container.innerHTML = '<div class="sidebar-title">📊 تحليل الأحياء</div>';
 
     visibleMunicipalities.forEach((municipality) => {
         const districts = rawData[municipality.municipality];
         if (!districts) return;
 
+        // تحويل الأحياء إلى مصفوفة وترتيبها (أعلى 5)
         const districtsArray = Object.values(districts)
             .sort((a, b) => b.count - a.count)
             .slice(0, 5);
@@ -591,6 +648,7 @@ function drawSidebarCharts() {
 
         const canvasId = `sidebar-chart-${municipality.uniqueId}`;
         
+        // إنشاء بطاقة الرسم
         const card = document.createElement('div');
         card.className = 'chart-card';
         card.innerHTML = `
@@ -605,18 +663,21 @@ function drawSidebarCharts() {
         `;
         container.appendChild(card);
 
+        // رسم الرسم البياني
         setTimeout(() => {
             drawSidebarChart(canvasId, districtsArray, municipality.color);
         }, 50);
     });
 }
 
+// ✅ دالة رسم رسم بياني في الشريط الجانبي
 function drawSidebarChart(canvasId, districtsArray, baseColor) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
     
+    // إنشاء ألوان متدرجة
     const backgroundColors = districtsArray.map((_, i) => {
         const opacity = 1 - (i * 0.15);
         return hexToRgba(baseColor, opacity);
@@ -625,7 +686,7 @@ function drawSidebarChart(canvasId, districtsArray, baseColor) {
     sidebarCharts[canvasId] = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: districtsArray.map(d => d.name.substring(0, 10)),
+            labels: districtsArray.map(d => d.name.substring(0, 10)), // اختصار الأسماء
             datasets: [{
                 label: 'البلاغات',
                 data: districtsArray.map(d => d.count),
@@ -698,33 +759,33 @@ function draw() {
     clearMapLayers();
 
     visibleMunicipalities.forEach((m) => {
-        let layer;
         if (m.points.length >= 3) {
             let hull = convexHull(m.points);
 
-            layer = L.polygon(hull.map(p => [p.lat, p.lng]), {
+            let poly = L.polygon(hull.map(p => [p.lat, p.lng]), {
                 color: m.color,
                 fillColor: m.color,
                 fillOpacity: 0.25,
                 weight: 4
             }).addTo(map);
 
-            layer.on('mouseover', function() { this.setStyle({ fillOpacity: 0.45, weight: 6 }); });
-            layer.on('mouseout', function() { this.setStyle({ fillOpacity: 0.25, weight: 4 }); });
+            poly.on('mouseover', function() { this.setStyle({ fillOpacity: 0.45, weight: 6 }); });
+            poly.on('mouseout', function() { this.setStyle({ fillOpacity: 0.25, weight: 4 }); });
+
+            polygons.push(poly);
         } else if (m.points.length > 0) {
-            layer = L.circleMarker([m.centerLat, m.centerLng], {
+            let circle = L.circleMarker([m.centerLat, m.centerLng], {
                 radius: 16,
                 color: m.color,
                 fillColor: m.color,
                 fillOpacity: 0.35,
                 weight: 4
             }).addTo(map);
+
+            polygons.push(circle);
         }
 
-        if (layer) {
-            polygons.push(layer);
-        }
-
+        // ✅ إخفاء الرقم - عرض اسم البلدية فقط
         let label = L.marker([m.centerLat, m.centerLng], {
             icon: L.divIcon({
                 className: 'custom-label',
@@ -735,6 +796,7 @@ function draw() {
                 iconAnchor: [50, 15]
             })
         }).addTo(map);
+
         labels.push(label);
     });
 }
@@ -926,6 +988,7 @@ async function exportSlide() {
                 }).addTo(exportMap);
             }
 
+            // ✅ في التصدير: اسم البلدية فقط بدون رقم
             L.marker([m.centerLat, m.centerLng], {
                 icon: L.divIcon({
                     className: 'custom-label',
