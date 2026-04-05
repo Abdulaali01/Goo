@@ -63,10 +63,6 @@ body {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
 }
 
-.btn-slide {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-}
-
 .main-container {
     margin-top: 80px;
     padding: 20px;
@@ -291,6 +287,10 @@ body {
     direction: rtl;
 }
 
+.map-label-name {
+    color: #333;
+}
+
 .map-label-count {
     background: var(--district-color);
     color: white;
@@ -301,188 +301,203 @@ body {
     text-align: center;
 }
 
-/* ==================== SLIDE 16:9 EXPORT ==================== */
-.slide-container {
-    width: 1920px;
-    height: 1080px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 999999;
-    display: none;
+/* INCREASED HEIGHT EXPORT - 1200px instead of 980px */
+.export-container {
+    width: 1920px !important;
+    height: 1200px !important; /* INCREASED from 980px */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    display: grid !important;
+    grid-template-columns: 680px 1fr !important;
+    gap: 20px !important;
+    padding: 20px !important;
+    position: fixed !important;
+    top: 100px !important;
+    left: 0 !important;
+    z-index: 999999 !important;
+}
+
+.export-left {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    height: 100% !important;
+}
+
+/* Adjusted row heights for 1200px */
+.export-top-row {
+    display: grid !important;
+    grid-template-columns: 220px 1fr !important;
+    gap: 15px !important;
+    height: 45% !important; /* Reduced to make room for districts */
+}
+
+.export-legend {
+    background: white;
+    border-radius: 16px;
+    padding: 15px;
     overflow: hidden;
 }
 
-.slide-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 70px;
-    background: linear-gradient(90deg, #5a67d8 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-}
-
-.slide-title {
-    color: white;
-    font-size: 28px;
-    font-weight: 900;
-}
-
-.slide-date {
-    color: rgba(255,255,255,0.9);
+.export-legend .card-title {
     font-size: 16px;
-    font-weight: 600;
-    margin-right: 20px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
 }
 
-.slide-content {
-    position: absolute;
-    top: 70px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: grid;
-    grid-template-columns: 55% 45%;
-    gap: 15px;
-    padding: 20px;
-}
-
-.slide-map {
+.export-chart-stats {
     background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    position: relative;
-}
-
-.slide-right {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.slide-top-row {
-    display: grid;
-    grid-template-columns: 35% 65%;
-    gap: 15px;
-    height: 320px;
-}
-
-.slide-legend {
-    background: white;
-    border-radius: 15px;
-    padding: 15px;
-    overflow-y: auto;
-}
-
-.slide-main-chart {
-    background: white;
-    border-radius: 15px;
+    border-radius: 16px;
     padding: 15px;
     display: flex;
     flex-direction: column;
 }
 
-.slide-chart-area {
+.export-chart-stats .card-title {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+}
+
+.export-chart-stats .chart-area {
     flex: 1;
+    min-height: 180px;
     position: relative;
 }
 
-.slide-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 2px solid #e0e0e0;
+.export-chart-stats .stats-area {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+    margin-top: 10px !important;
+    padding-top: 10px !important;
+    border-top: 2px solid #e0e0e0 !important;
 }
 
-.slide-stat-box {
+.export-chart-stats .stat-box {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     border-radius: 10px;
     padding: 10px;
     text-align: center;
 }
 
-.slide-stat-label {
-    font-size: 10px;
+.export-chart-stats .stat-label {
+    font-size: 12px;
     color: #666;
-    font-weight: 700;
+    margin-bottom: 5px;
 }
 
-.slide-stat-value {
-    font-size: 18px;
-    font-weight: 900;
+.export-chart-stats .stat-value {
+    font-size: 20px;
+    font-weight: 800;
     color: #667eea;
 }
 
-.slide-districts {
+/* INCREASED HEIGHT for districts section */
+.export-districts-compact {
+    height: 55% !important; /* Increased from 45% */
     background: white;
-    border-radius: 15px;
+    border-radius: 16px;
     padding: 15px;
-    flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-.slide-districts-grid {
+.export-districts-compact .card-title {
+    font-size: 16px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+}
+
+/* 2 rows of 3 charts each */
+.export-districts-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     gap: 12px;
     flex: 1;
-    margin-top: 10px;
+    overflow: hidden;
 }
 
-.slide-mini-chart {
+.export-mini-chart {
     background: #f8f9fa;
-    border-radius: 12px;
-    padding: 12px;
-    border: 2px solid #e9ecef;
-}
-
-.slide-mini-header {
+    border-radius: 10px;
+    padding: 8px;
     display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-    padding-bottom: 6px;
-    border-bottom: 2px solid #dee2e6;
+    flex-direction: column;
+    min-height: 0;
 }
 
-.slide-mini-color {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-}
-
-.slide-mini-name {
-    font-size: 12px;
+.export-mini-chart-title {
+    font-size: 13px;
     font-weight: 800;
-    color: #333;
+    text-align: center;
+    margin-bottom: 5px;
+    padding-bottom: 3px;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.export-mini-chart-area {
     flex: 1;
-    text-align: right;
-}
-
-.slide-mini-area {
-    height: 100px;
     position: relative;
+    min-height: 0;
 }
 
-body.slide-mode {
-    overflow: hidden !important;
+.export-map {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    height: 100% !important;
+    width: 100% !important;
 }
 
-body.slide-mode .main-container,
-body.slide-mode .top-bar {
+.export-map #mapExport {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.export-container .original-content {
     display: none !important;
 }
 
-body.slide-mode .slide-container {
-    display: block !important;
+.export-container ~ .top-bar,
+.export-container ~ .custom-zoom {
+    display: none !important;
+}
+
+body.exporting {
+    overflow: hidden !important;
+}
+
+body.exporting .main-container:not(.export-container) {
+    display: none !important;
+}
+
+@media (max-width: 1100px) {
+    .stats-section {
+        grid-template-columns: 1fr;
+    }
+    .districts-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .districts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .districts-grid {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 </head>
@@ -510,8 +525,7 @@ body.slide-mode .slide-container {
     <input id="searchBox" placeholder="🔍 بحث عن بلدية..." oninput="applyCurrentFilter()">
 
     <button onclick="fitAll()">🌍 إظهار الكل</button>
-    <button class="btn-export" onclick="exportSlide()">📸 تصدير 1500px</button>
-    <button class="btn-slide" onclick="exportSlide16x9()">🖥️ تصدير سلايد 16:9</button>
+    <button class="btn-export" onclick="exportSlide()">📸 تصدير للبور بوينت</button>
     <button onclick="exportExcel()">📊 Excel</button>
     <button onclick="clearAllData()" style="background: #ff4757 !important;">🗑️ مسح</button>
 </div>
@@ -520,6 +534,7 @@ body.slide-mode .slide-container {
 
     <div class="map-wrapper" id="mapSection">
         <div id="map"></div>
+
         <div class="custom-zoom">
             <button class="zoom-btn" onclick="map.zoomIn()">+</button>
             <button class="zoom-btn" onclick="map.zoomOut()">−</button>
@@ -527,6 +542,7 @@ body.slide-mode .slide-container {
     </div>
 
     <div class="stats-section" id="statsSection">
+
         <div class="card">
             <div class="card-title">🎨 دليل الألوان</div>
             <div id="legendBox" class="legend-container"></div>
@@ -554,11 +570,14 @@ body.slide-mode .slide-container {
                 <span class="stat-value" id="topDistrict">-</span>
             </div>
         </div>
+
     </div>
 
     <div class="districts-compact-card" id="districtsCompactCard" style="display: none;">
         <div class="districts-compact-title">🏘️ أعلى 3 أحياء لكل بلدية</div>
-        <div class="districts-grid" id="districtsGrid"></div>
+        <div class="districts-grid" id="districtsGrid">
+            <!-- Mini charts will be inserted here -->
+        </div>
     </div>
 
     <div class="stats-section" id="categorySection">
@@ -568,71 +587,6 @@ body.slide-mode .slide-container {
                 <canvas id="chart2"></canvas>
             </div>
         </div>
-    </div>
-
-</div>
-
-<!-- SLIDE 16:9 CONTAINER -->
-<div class="slide-container" id="slideContainer">
-    
-    <div class="slide-header">
-        <div class="slide-title">
-            📊 تقرير تحليل البلديات
-            <span class="slide-date" id="slideDate">الإثنين، ٦ أبريل ٢٠٢٦</span>
-        </div>
-    </div>
-
-    <div class="slide-content">
-        
-        <!-- الخريطة -->
-        <div class="slide-map" id="slideMapContainer">
-            <div id="slideMap" style="width: 100%; height: 100%;"></div>
-        </div>
-
-        <!-- القسم الأيمن -->
-        <div class="slide-right">
-            
-            <!-- الصف العلوي -->
-            <div class="slide-top-row">
-                
-                <!-- دليل الألوان -->
-                <div class="slide-legend" id="slideLegend">
-                    <div class="card-title" style="font-size: 14px; padding-bottom: 8px; margin-bottom: 10px;">🎨 دليل الألوان</div>
-                    <div id="slideLegendContent"></div>
-                </div>
-
-                <!-- المخطط الرئيسي -->
-                <div class="slide-main-chart">
-                    <div class="card-title" style="font-size: 14px; padding-bottom: 8px; margin-bottom: 10px;">📊 توزيع البلاغات</div>
-                    <div class="slide-chart-area">
-                        <canvas id="slideMainChart"></canvas>
-                    </div>
-                    <div class="slide-stats">
-                        <div class="slide-stat-box">
-                            <div class="slide-stat-label">الأعلى</div>
-                            <div class="slide-stat-value" id="slideTopMuni" style="font-size: 11px;">-</div>
-                        </div>
-                        <div class="slide-stat-box">
-                            <div class="slide-stat-label">البلديات</div>
-                            <div class="slide-stat-value" id="slideTotalMuni">0</div>
-                        </div>
-                        <div class="slide-stat-box">
-                            <div class="slide-stat-label">الإجمالي</div>
-                            <div class="slide-stat-value" id="slideTotalReports">0</div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- شبكة المخططات -->
-            <div class="slide-districts">
-                <div class="card-title" style="font-size: 14px; padding-bottom: 8px; margin-bottom: 0;">🏘️ أعلى 3 أحياء لكل بلدية</div>
-                <div class="slide-districts-grid" id="slideDistrictsGrid"></div>
-            </div>
-
-        </div>
-
     </div>
 
 </div>
@@ -649,7 +603,6 @@ let allMunicipalities = new Set();
 let allDates = new Set();
 let categoryData = {};
 let miniCharts = {};
-let slideCharts = {};
 
 const colors = [
     "#e74c3c", "#e67e22", "#f39c12", "#27ae60", "#16a085",
@@ -672,7 +625,10 @@ function initMap() {
     screenshoter = L.simpleMapScreenshoter({
         screenName: 'خريطة_البلديات',
         hidden: true,
-        hideElementsWithSelectors: ['.custom-zoom']
+        hideElementsWithSelectors: ['.custom-zoom'],
+        caption: function() {
+            return 'تحليل البلديات - ' + new Date().toLocaleDateString('ar-SA');
+        }
     }).addTo(map);
 }
 
@@ -697,6 +653,7 @@ function processRows(rows) {
     allMunicipalities.clear();
     allDates.clear();
     categoryData = {};
+
     let municipalityDistricts = {};
 
     for (let i = 1; i < rows.length; i++) {
@@ -888,7 +845,10 @@ function drawCompactDistrictsCharts() {
                         anchor: 'end',
                         align: 'top',
                         color: '#000',
-                        font: { weight: '900', size: 13 },
+                        font: { 
+                            weight: '900',
+                            size: 13
+                        },
                         formatter: (value) => value,
                         offset: 2
                     }
@@ -897,11 +857,24 @@ function drawCompactDistrictsCharts() {
                     y: { 
                         beginAtZero: true, 
                         grid: { color: 'rgba(0,0,0,0.1)' },
-                        ticks: { font: { size: 11, weight: '800' }, color: '#000' }
+                        ticks: { 
+                            font: { 
+                                size: 11,
+                                weight: '800'
+                            },
+                            color: '#000'
+                        }
                     },
                     x: { 
                         grid: { display: false }, 
-                        ticks: { font: { size: 11, weight: '800' }, color: '#333', maxRotation: 25 } 
+                        ticks: { 
+                            font: { 
+                                size: 11,
+                                weight: '800'
+                            },
+                            color: '#333',
+                            maxRotation: 25
+                        } 
                     }
                 }
             }
@@ -929,14 +902,17 @@ function draw() {
     visibleMunicipalities.forEach((m) => {
         if (m.points.length >= 3) {
             let hull = convexHull(m.points);
+
             let poly = L.polygon(hull.map(p => [p.lat, p.lng]), {
                 color: m.color,
                 fillColor: m.color,
                 fillOpacity: 0.25,
                 weight: 4
             }).addTo(map);
+
             poly.on('mouseover', function() { this.setStyle({ fillOpacity: 0.45, weight: 6 }); });
             poly.on('mouseout', function() { this.setStyle({ fillOpacity: 0.25, weight: 4 }); });
+
             polygons.push(poly);
         } else if (m.points.length > 0) {
             let circle = L.circleMarker([m.centerLat, m.centerLng], {
@@ -946,6 +922,7 @@ function draw() {
                 fillOpacity: 0.35,
                 weight: 4
             }).addTo(map);
+
             polygons.push(circle);
         }
 
@@ -959,6 +936,7 @@ function draw() {
                 iconAnchor: [20, 20]
             })
         }).addTo(map);
+
         labels.push(label);
     });
 
@@ -1020,7 +998,11 @@ function drawChart() {
                 },
                 x: { 
                     grid: { display: false }, 
-                    ticks: { maxRotation: 45, minRotation: 45, font: { size: 11, weight: 'bold' } } 
+                    ticks: { 
+                        maxRotation: 45, 
+                        minRotation: 45, 
+                        font: { size: 11, weight: 'bold' } 
+                    } 
                 }
             }
         }
@@ -1079,6 +1061,7 @@ function drawCategoryChart() {
 
 function buildLegend() {
     const container = document.getElementById("legendBox");
+
     container.innerHTML = visibleMunicipalities.slice(0, 10).map((m, index) => `
         <div class="legend-item" onclick="highlightMunicipality('${m.uniqueId}')" title="${escapeHtml(m.municipality)}">
             <div class="legend-color-box" style="background: ${m.color};">${index + 1}</div>
@@ -1118,279 +1101,6 @@ function exportExcel() {
     XLSX.writeFile(wb, "تحليل_البلديات.xlsx");
 }
 
-function clearMapLayers() {
-    polygons.forEach(p => map.removeLayer(p));
-    labels.forEach(l => map.removeLayer(l));
-    polygons = [];
-    labels = [];
-}
-
-function clearAllData() {
-    if (confirm('هل أنت متأكد؟')) location.reload();
-}
-
-function showNotification(message) {
-    const notif = document.createElement('div');
-    notif.style.cssText = `
-        position: fixed; top: 90px; left: 50%; transform: translateX(-50%);
-        background: rgba(0,0,0,0.85); color: white; padding: 15px 30px;
-        border-radius: 30px; font-weight: 600; z-index: 100001;
-        transition: opacity .3s ease;
-    `;
-    notif.textContent = message;
-    document.body.appendChild(notif);
-    setTimeout(() => { 
-        notif.style.opacity = '0'; 
-        setTimeout(() => notif.remove(), 300); 
-    }, 3000);
-}
-
-function escapeHtml(value) {
-    return String(value ?? '')
-        .replace(/&&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-
-// ==================== EXPORT SLIDE 16:9 ====================
-async function exportSlide16x9() {
-    showNotification('⏳ جاري إعداد السلايد 16:9...');
-
-    try {
-        document.body.classList.add('slide-mode');
-
-        // تحديث تاريخ السلايد
-        document.getElementById('slideDate').textContent = new Date().toLocaleDateString('ar-SA', { 
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
-
-        // تحديث الإحصائيات
-        const total = visibleMunicipalities.reduce((sum, m) => sum + m.count, 0);
-        document.getElementById('slideTotalReports').textContent = total.toLocaleString();
-        document.getElementById('slideTotalMuni').textContent = visibleMunicipalities.length;
-        document.getElementById('slideTopMuni').textContent = visibleMunicipalities[0]?.municipality || '-';
-
-        // رسم الخريطة في السلايد
-        await initSlideMap();
-
-        // رسم دليل الألوان
-        buildSlideLegend();
-
-        // رسم المخطط الرئيسي
-        drawSlideMainChart();
-
-        // رسم المخططات الصغيرة
-        drawSlideDistricts();
-
-        // انتظار التحميل
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        // تصدير الصورة
-        const canvas = await html2canvas(document.getElementById('slideContainer'), {
-            width: 1920,
-            height: 1080,
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: null,
-            logging: false
-        });
-
-        canvas.toBlob(blob => {
-            saveAs(blob, `تقرير_البلديات_سلايد_${new Date().toLocaleDateString('ar-SA')}.png`);
-            showNotification('✅ تم تصدير السلايد 16:9 بنجاح!');
-            document.body.classList.remove('slide-mode');
-        }, 'image/png');
-
-    } catch (err) {
-        console.error('Export error:', err);
-        alert('حدث خطأ: ' + err.message);
-        document.body.classList.remove('slide-mode');
-    }
-}
-
-async function initSlideMap() {
-    const slideMap = L.map('slideMap', {
-        zoomControl: false,
-        attributionControl: false,
-        preferCanvas: true
-    }).setView(map.getCenter(), map.getZoom());
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        crossOrigin: true
-    }).addTo(slideMap);
-
-    visibleMunicipalities.forEach((m) => {
-        if (m.points.length >= 3) {
-            let hull = convexHull(m.points);
-            L.polygon(hull.map(p => [p.lat, p.lng]), {
-                color: m.color,
-                fillColor: m.color,
-                fillOpacity: 0.25,
-                weight: 4
-            }).addTo(slideMap);
-        } else if (m.points.length > 0) {
-            L.circleMarker([m.centerLat, m.centerLng], {
-                radius: 16,
-                color: m.color,
-                fillColor: m.color,
-                fillOpacity: 0.35,
-                weight: 4
-            }).addTo(slideMap);
-        }
-
-        L.marker([m.centerLat, m.centerLng], {
-            icon: L.divIcon({
-                className: 'custom-label',
-                html: `<div class="map-label-container" style="--district-color: ${m.color}; border-color: ${m.color};">
-                    <span class="map-label-count">${m.count}</span>
-                </div>`,
-                iconSize: null,
-                iconAnchor: [20, 20]
-            })
-        }).addTo(slideMap);
-    });
-
-    await new Promise(resolve => setTimeout(resolve, 1000));
-}
-
-function buildSlideLegend() {
-    const container = document.getElementById('slideLegendContent');
-    container.innerHTML = visibleMunicipalities.slice(0, 6).map((m, index) => `
-        <div class="legend-item" style="padding: 6px; margin-bottom: 6px; font-size: 11px;">
-            <div class="legend-color-box" style="background: ${m.color}; width: 18px; height: 18px; font-size: 9px;">${index + 1}</div>
-            <span class="legend-text">${escapeHtml(m.municipality)}</span>
-            <span class="legend-count">${m.count}</span>
-        </div>
-    `).join("");
-}
-
-function drawSlideMainChart() {
-    const ctx = document.getElementById('slideMainChart');
-    if (!ctx) return;
-
-    new Chart(ctx.getContext('2d'), {
-        type: 'bar',
-        data: {
-            labels: visibleMunicipalities.map(d => d.municipality.substring(0, 10)),
-            datasets: [{
-                data: visibleMunicipalities.map(d => d.count),
-                backgroundColor: visibleMunicipalities.map(d => d.color),
-                borderRadius: 8,
-                borderSkipped: false,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: false,
-            plugins: {
-                legend: { display: false },
-                datalabels: {
-                    anchor: 'end',
-                    align: 'top',
-                    color: '#333',
-                    font: { weight: '900', size: 11 },
-                    formatter: (value) => value
-                }
-            },
-            scales: {
-                y: { 
-                    beginAtZero: true, 
-                    grid: { color: 'rgba(0,0,0,0.05)' },
-                    ticks: { font: { size: 10, weight: 'bold' } }
-                },
-                x: { 
-                    grid: { display: false }, 
-                    ticks: { maxRotation: 45, font: { size: 9, weight: 'bold' } } 
-                }
-            }
-        }
-    });
-}
-
-function drawSlideDistricts() {
-    const container = document.getElementById('slideDistrictsGrid');
-    container.innerHTML = '';
-
-    Object.values(slideCharts).forEach(chart => chart.destroy());
-    slideCharts = {};
-
-    const limitedData = visibleMunicipalities.slice(0, 4);
-
-    limitedData.forEach((municipality, index) => {
-        const districts = window.municipalityDistrictsData[municipality.municipality];
-        if (!districts) return;
-
-        const sortedDistricts = Object.entries(districts)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 3);
-
-        const box = document.createElement('div');
-        box.className = 'slide-mini-chart';
-        box.innerHTML = `
-            <div class="slide-mini-header">
-                <div class="slide-mini-color" style="background: ${municipality.color}"></div>
-                <div class="slide-mini-name">${escapeHtml(municipality.municipality)}</div>
-            </div>
-            <div class="slide-mini-area">
-                <canvas id="slideMini_${index}"></canvas>
-            </div>
-        `;
-        container.appendChild(box);
-
-        const ctx = document.getElementById(`slideMini_${index}`).getContext('2d');
-        const chartColors = [
-            municipality.color,
-            adjustColor(municipality.color, -40),
-            adjustColor(municipality.color, -80)
-        ];
-
-        slideCharts[index] = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: sortedDistricts.map(d => d[0].substring(0, 5)),
-                datasets: [{
-                    data: sortedDistricts.map(d => d[1]),
-                    backgroundColor: chartColors,
-                    borderRadius: 6,
-                    borderSkipped: false,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: false,
-                plugins: {
-                    legend: { display: false },
-                    datalabels: {
-                        anchor: 'end',
-                        align: 'top',
-                        color: '#333',
-                        font: { weight: '900', size: 10 },
-                        formatter: (value) => value
-                    }
-                },
-                scales: {
-                    y: { 
-                        beginAtZero: true, 
-                        grid: { color: 'rgba(0,0,0,0.05)' },
-                        ticks: { font: { size: 9, weight: 'bold' } }
-                    },
-                    x: { 
-                        grid: { display: false }, 
-                        ticks: { font: { size: 10, weight: 'bold' } } 
-                    }
-                }
-            }
-        });
-    });
-}
-
-// ==================== ORIGINAL EXPORT 1500px ====================
 async function exportSlide() {
     showNotification('⏳ جاري إعداد السلايد...');
 
@@ -1411,26 +1121,28 @@ async function exportSlide() {
         legendBox.className = 'export-legend';
         legendBox.innerHTML = `
             <div class="card-title">🎨 دليل الألوان</div>
-            <div class="legend-container">${document.getElementById('legendBox').innerHTML}</div>
+            <div class="legend-container" id="exportLegend"></div>
         `;
 
         const chartStatsBox = document.createElement('div');
         chartStatsBox.className = 'export-chart-stats';
         chartStatsBox.innerHTML = `
             <div class="card-title">📊 توزيع البلاغات بالبلديات</div>
-            <div class="chart-area"><canvas id="exportChart"></canvas></div>
+            <div class="chart-area">
+                <canvas id="exportChart"></canvas>
+            </div>
             <div class="stats-area">
                 <div class="stat-box">
                     <div class="stat-label">إجمالي البلاغات</div>
-                    <div class="stat-value">${document.getElementById('totalReports').textContent}</div>
+                    <div class="stat-value" id="exportTotalReports">0</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">عدد البلديات</div>
-                    <div class="stat-value">${document.getElementById('totalDistricts').textContent}</div>
+                    <div class="stat-value" id="exportTotalDistricts">0</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">الأعلى بلاغات</div>
-                    <div class="stat-value">${document.getElementById('topDistrict').textContent}</div>
+                    <div class="stat-value" id="exportTopDistrict">-</div>
                 </div>
             </div>
         `;
@@ -1438,23 +1150,15 @@ async function exportSlide() {
         topRow.appendChild(legendBox);
         topRow.appendChild(chartStatsBox);
 
-        const districtsBox = document.createElement('div');
-        districtsBox.className = 'export-districts-compact';
-        districtsBox.innerHTML = `
+        const districtsCompactBox = document.createElement('div');
+        districtsCompactBox.className = 'export-districts-compact';
+        districtsCompactBox.innerHTML = `
             <div class="card-title">🏘️ أعلى 3 أحياء لكل بلدية</div>
             <div class="export-districts-grid" id="exportDistrictsGrid"></div>
         `;
 
-        const categoriesBox = document.createElement('div');
-        categoriesBox.className = 'export-categories-section';
-        categoriesBox.innerHTML = `
-            <div class="card-title">📊 توزيع التصنيفات</div>
-            <div class="export-categories-chart"><canvas id="exportCategoriesChart"></canvas></div>
-        `;
-
         leftColumn.appendChild(topRow);
-        leftColumn.appendChild(districtsBox);
-        leftColumn.appendChild(categoriesBox);
+        leftColumn.appendChild(districtsCompactBox);
 
         const mapBox = document.createElement('div');
         mapBox.className = 'export-map';
@@ -1464,7 +1168,13 @@ async function exportSlide() {
         exportContainer.appendChild(mapBox);
         document.body.appendChild(exportContainer);
 
-        drawExportDistricts();
+        document.getElementById('exportTotalReports').textContent = document.getElementById('totalReports').textContent;
+        document.getElementById('exportTotalDistricts').textContent = document.getElementById('totalDistricts').textContent;
+        document.getElementById('exportTopDistrict').textContent = document.getElementById('topDistrict').textContent;
+
+        document.getElementById('exportLegend').innerHTML = document.getElementById('legendBox').innerHTML;
+
+        drawExportCompactDistricts();
 
         await new Promise(resolve => setTimeout(resolve, 300));
 
@@ -1482,6 +1192,7 @@ async function exportSlide() {
         visibleMunicipalities.forEach((m) => {
             if (m.points.length >= 3) {
                 let hull = convexHull(m.points);
+
                 L.polygon(hull.map(p => [p.lat, p.lng]), {
                     color: m.color,
                     fillColor: m.color,
@@ -1510,16 +1221,15 @@ async function exportSlide() {
             }).addTo(exportMap);
         });
 
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 1800));
 
-        drawExportMainChart();
-        drawExportCategoriesChart();
-
+        drawExportCharts();
         await new Promise(resolve => setTimeout(resolve, 500));
 
+        // INCREASED canvas height to 1200px
         const canvas = await html2canvas(exportContainer, {
             width: 1920,
-            height: 1500,
+            height: 1200, /* INCREASED from 980 */
             scale: 1,
             useCORS: true,
             allowTaint: true,
@@ -1531,7 +1241,7 @@ async function exportSlide() {
         const ctx = finalCanvas.getContext('2d');
 
         finalCanvas.width = 1920;
-        finalCanvas.height = 1600;
+        finalCanvas.height = 1300; /* INCREASED from 1080 */
 
         const gradient = ctx.createLinearGradient(0, 0, 0, 100);
         gradient.addColorStop(0, '#667eea');
@@ -1560,7 +1270,7 @@ async function exportSlide() {
         }, 'image/png');
 
     } catch (err) {
-        console.error('Export error:', err);
+        console.error(err);
         alert('حدث خطأ: ' + err.message);
         document.body.classList.remove('exporting');
         const exportContainer = document.getElementById('exportContainer');
@@ -1568,11 +1278,12 @@ async function exportSlide() {
     }
 }
 
-function drawExportDistricts() {
+function drawExportCompactDistricts() {
     const container = document.getElementById('exportDistrictsGrid');
     if (!container || !window.municipalityDistrictsData) return;
 
-    const limitedMunicipalities = visibleMunicipalities.slice(0, 8);
+    // Show up to 6 municipalities (2 rows x 3 columns)
+    const limitedMunicipalities = visibleMunicipalities.slice(0, 6);
 
     limitedMunicipalities.forEach((municipality, index) => {
         const muniName = municipality.municipality;
@@ -1624,7 +1335,10 @@ function drawExportDistricts() {
                         anchor: 'end',
                         align: 'top',
                         color: '#000',
-                        font: { weight: '900', size: 11 },
+                        font: { 
+                            weight: '900',
+                            size: 12
+                        },
                         formatter: (value) => value,
                         offset: 2
                     }
@@ -1633,11 +1347,24 @@ function drawExportDistricts() {
                     y: { 
                         beginAtZero: true, 
                         grid: { color: 'rgba(0,0,0,0.1)' },
-                        ticks: { font: { size: 9, weight: '800' }, color: '#000' }
+                        ticks: { 
+                            font: { 
+                                size: 10,
+                                weight: '800'
+                            },
+                            color: '#000'
+                        }
                     },
                     x: { 
                         grid: { display: false }, 
-                        ticks: { font: { size: 9, weight: '800' }, color: '#333', maxRotation: 20 } 
+                        ticks: { 
+                            font: { 
+                                size: 10,
+                                weight: '800'
+                            },
+                            color: '#333',
+                            maxRotation: 20
+                        } 
                     }
                 }
             }
@@ -1645,11 +1372,9 @@ function drawExportDistricts() {
     });
 }
 
-function drawExportMainChart() {
-    const ctx = document.getElementById('exportChart');
-    if (!ctx) return;
-
-    new Chart(ctx.getContext('2d'), {
+function drawExportCharts() {
+    const ctx1 = document.getElementById('exportChart').getContext('2d');
+    new Chart(ctx1, {
         type: 'bar',
         data: {
             labels: visibleMunicipalities.map(d => d.municipality),
@@ -1683,59 +1408,11 @@ function drawExportMainChart() {
                 },
                 x: { 
                     grid: { display: false }, 
-                    ticks: { maxRotation: 45, minRotation: 45, font: { size: 9, weight: 'bold' } } 
-                }
-            }
-        }
-    });
-}
-
-function drawExportCategoriesChart() {
-    const ctx = document.getElementById('exportCategoriesChart');
-    if (!ctx) return;
-
-    const cats = Object.keys(categoryData);
-    const vals = Object.values(categoryData);
-
-    const sorted = cats.map((cat, i) => ({ cat, val: vals[i], color: colors[i % colors.length] }))
-                       .sort((a, b) => b.val - a.val)
-                       .slice(0, 8);
-
-    new Chart(ctx.getContext('2d'), {
-        type: 'bar',
-        data: {
-            labels: sorted.map(s => s.cat),
-            datasets: [{
-                data: sorted.map(s => s.val),
-                backgroundColor: sorted.map(s => s.color),
-                borderRadius: 6,
-                borderSkipped: false,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: false,
-            indexAxis: 'y',
-            plugins: {
-                legend: { display: false },
-                datalabels: {
-                    anchor: 'end',
-                    align: 'right',
-                    color: '#000',
-                    font: { weight: '900', size: 12 },
-                    formatter: (value) => value
-                }
-            },
-            scales: {
-                x: { 
-                    beginAtZero: true, 
-                    grid: { color: 'rgba(0,0,0,0.1)' },
-                    ticks: { font: { size: 10, weight: '800' }, color: '#000' }
-                },
-                y: { 
-                    grid: { display: false }, 
-                    ticks: { font: { size: 11, weight: '800' }, color: '#333' } 
+                    ticks: { 
+                        maxRotation: 45, 
+                        minRotation: 45, 
+                        font: { size: 9, weight: 'bold' } 
+                    } 
                 }
             }
         }
@@ -1744,6 +1421,7 @@ function drawExportCategoriesChart() {
 
 function fitAll() {
     if (visibleMunicipalities.length === 0) return;
+
     let bounds = [];
     visibleMunicipalities.forEach(m => m.points.forEach(p => bounds.push([p.lat, p.lng])));
     if (bounds.length) {
@@ -1751,7 +1429,42 @@ function fitAll() {
     }
 }
 
-// Initialize
+function clearMapLayers() {
+    polygons.forEach(p => map.removeLayer(p));
+    labels.forEach(l => map.removeLayer(l));
+    polygons = [];
+    labels = [];
+}
+
+function clearAllData() {
+    if (confirm('هل أنت متأكد؟')) location.reload();
+}
+
+function showNotification(message) {
+    const notif = document.createElement('div');
+    notif.style.cssText = `
+        position: fixed; top: 90px; left: 50%; transform: translateX(-50%);
+        background: rgba(0,0,0,0.85); color: white; padding: 15px 30px;
+        border-radius: 30px; font-weight: 600; z-index: 100001;
+        transition: opacity .3s ease;
+    `;
+    notif.textContent = message;
+    document.body.appendChild(notif);
+    setTimeout(() => { 
+        notif.style.opacity = '0'; 
+        setTimeout(() => notif.remove(), 300); 
+    }, 3000);
+}
+
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 initMap();
 </script>
 </body>
