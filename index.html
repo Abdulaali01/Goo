@@ -127,7 +127,6 @@ body {
     gap: 20px;
 }
 
-/* NEW: Compact districts charts in ONE box - SMALLER & CLOSER */
 .districts-compact-card {
     background: white;
     border-radius: 20px;
@@ -137,47 +136,44 @@ body {
 }
 
 .districts-compact-title {
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 900;
     color: #333;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
     border-bottom: 3px solid #667eea;
     text-align: center;
 }
 
-/* REDUCED GAP between charts */
 .districts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
 }
 
-/* SMALLER container */
 .mini-chart-container {
     background: #f8f9fa;
-    border-radius: 8px;
-    padding: 6px;
-    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 8px;
+    border: 2px solid #e9ecef;
 }
 
 .mini-chart-title {
-    font-size: 10px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 800;
     color: #333;
     text-align: center;
-    margin-bottom: 4px;
-    padding-bottom: 3px;
-    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid #dee2e6;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* SMALLER height */
 .mini-chart-wrapper {
     position: relative;
-    height: 100px;
+    height: 120px;
     width: 100%;
 }
 
@@ -305,10 +301,10 @@ body {
     text-align: center;
 }
 
-/* أنماط التصدير */
+/* INCREASED HEIGHT EXPORT - 1200px instead of 980px */
 .export-container {
     width: 1920px !important;
-    height: 980px !important;
+    height: 1200px !important; /* INCREASED from 980px */
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     display: grid !important;
     grid-template-columns: 680px 1fr !important;
@@ -327,11 +323,12 @@ body {
     height: 100% !important;
 }
 
+/* Adjusted row heights for 1200px */
 .export-top-row {
     display: grid !important;
     grid-template-columns: 220px 1fr !important;
     gap: 15px !important;
-    height: 55% !important;
+    height: 45% !important; /* Reduced to make room for districts */
 }
 
 .export-legend {
@@ -397,48 +394,49 @@ body {
     color: #667eea;
 }
 
-/* Export districts - SMALLER */
+/* INCREASED HEIGHT for districts section */
 .export-districts-compact {
-    height: 45% !important;
+    height: 55% !important; /* Increased from 45% */
     background: white;
     border-radius: 16px;
-    padding: 12px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
 }
 
 .export-districts-compact .card-title {
-    font-size: 14px;
-    font-weight: 800;
-    margin-bottom: 8px;
-    padding-bottom: 6px;
+    font-size: 16px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
 }
 
-/* REDUCED GAP in export */
+/* 2 rows of 3 charts each */
 .export-districts-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 12px;
     flex: 1;
     overflow: hidden;
 }
 
-/* SMALLER in export */
 .export-mini-chart {
     background: #f8f9fa;
-    border-radius: 6px;
-    padding: 5px;
+    border-radius: 10px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
+    min-height: 0;
 }
 
 .export-mini-chart-title {
-    font-size: 9px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 800;
     text-align: center;
-    margin-bottom: 3px;
-    padding-bottom: 2px;
-    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 5px;
+    padding-bottom: 3px;
+    border-bottom: 2px solid #dee2e6;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -447,6 +445,7 @@ body {
 .export-mini-chart-area {
     flex: 1;
     position: relative;
+    min-height: 0;
 }
 
 .export-map {
@@ -574,7 +573,6 @@ body.exporting .main-container:not(.export-container) {
 
     </div>
 
-    <!-- ONE BOX with compact district charts - SMALLER -->
     <div class="districts-compact-card" id="districtsCompactCard" style="display: none;">
         <div class="districts-compact-title">🏘️ أعلى 3 أحياء لكل بلدية</div>
         <div class="districts-grid" id="districtsGrid">
@@ -782,7 +780,6 @@ function applyCurrentFilter() {
     drawCompactDistrictsCharts();
 }
 
-// SMALLER compact charts
 function drawCompactDistrictsCharts() {
     const container = document.getElementById('districtsGrid');
     const card = document.getElementById('districtsCompactCard');
@@ -830,11 +827,11 @@ function drawCompactDistrictsCharts() {
         miniCharts[index] = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: sortedDistricts.map(d => d[0].substring(0, 5) + (d[0].length > 5 ? '..' : '')),
+                labels: sortedDistricts.map(d => d[0].substring(0, 6) + (d[0].length > 6 ? '..' : '')),
                 datasets: [{
                     data: sortedDistricts.map(d => d[1]),
                     backgroundColor: chartColors,
-                    borderRadius: 3,
+                    borderRadius: 4,
                     borderSkipped: false,
                 }]
             },
@@ -847,23 +844,36 @@ function drawCompactDistrictsCharts() {
                     datalabels: {
                         anchor: 'end',
                         align: 'top',
-                        color: '#333',
-                        font: { weight: 'bold', size: 9 },
+                        color: '#000',
+                        font: { 
+                            weight: '900',
+                            size: 13
+                        },
                         formatter: (value) => value,
-                        offset: -2
+                        offset: 2
                     }
                 },
                 scales: {
                     y: { 
                         beginAtZero: true, 
-                        grid: { color: 'rgba(0,0,0,0.05)' },
-                        ticks: { font: { size: 8, weight: 'bold' } }
+                        grid: { color: 'rgba(0,0,0,0.1)' },
+                        ticks: { 
+                            font: { 
+                                size: 11,
+                                weight: '800'
+                            },
+                            color: '#000'
+                        }
                     },
                     x: { 
                         grid: { display: false }, 
                         ticks: { 
-                            font: { size: 7, weight: 'bold' },
-                            maxRotation: 20
+                            font: { 
+                                size: 11,
+                                weight: '800'
+                            },
+                            color: '#333',
+                            maxRotation: 25
                         } 
                     }
                 }
@@ -1216,9 +1226,10 @@ async function exportSlide() {
         drawExportCharts();
         await new Promise(resolve => setTimeout(resolve, 500));
 
+        // INCREASED canvas height to 1200px
         const canvas = await html2canvas(exportContainer, {
             width: 1920,
-            height: 980,
+            height: 1200, /* INCREASED from 980 */
             scale: 1,
             useCORS: true,
             allowTaint: true,
@@ -1230,7 +1241,7 @@ async function exportSlide() {
         const ctx = finalCanvas.getContext('2d');
 
         finalCanvas.width = 1920;
-        finalCanvas.height = 1080;
+        finalCanvas.height = 1300; /* INCREASED from 1080 */
 
         const gradient = ctx.createLinearGradient(0, 0, 0, 100);
         gradient.addColorStop(0, '#667eea');
@@ -1271,6 +1282,7 @@ function drawExportCompactDistricts() {
     const container = document.getElementById('exportDistrictsGrid');
     if (!container || !window.municipalityDistrictsData) return;
 
+    // Show up to 6 municipalities (2 rows x 3 columns)
     const limitedMunicipalities = visibleMunicipalities.slice(0, 6);
 
     limitedMunicipalities.forEach((municipality, index) => {
@@ -1305,11 +1317,11 @@ function drawExportCompactDistricts() {
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: sortedDistricts.map(d => d[0].substring(0, 4) + (d[0].length > 4 ? '..' : '')),
+                labels: sortedDistricts.map(d => d[0].substring(0, 5) + (d[0].length > 5 ? '..' : '')),
                 datasets: [{
                     data: sortedDistricts.map(d => d[1]),
                     backgroundColor: chartColors,
-                    borderRadius: 2,
+                    borderRadius: 3,
                     borderSkipped: false,
                 }]
             },
@@ -1322,22 +1334,35 @@ function drawExportCompactDistricts() {
                     datalabels: {
                         anchor: 'end',
                         align: 'top',
-                        color: '#333',
-                        font: { weight: 'bold', size: 8 },
+                        color: '#000',
+                        font: { 
+                            weight: '900',
+                            size: 12
+                        },
                         formatter: (value) => value,
-                        offset: -1
+                        offset: 2
                     }
                 },
                 scales: {
                     y: { 
                         beginAtZero: true, 
-                        grid: { color: 'rgba(0,0,0,0.05)' },
-                        ticks: { font: { size: 7, weight: 'bold' } }
+                        grid: { color: 'rgba(0,0,0,0.1)' },
+                        ticks: { 
+                            font: { 
+                                size: 10,
+                                weight: '800'
+                            },
+                            color: '#000'
+                        }
                     },
                     x: { 
                         grid: { display: false }, 
                         ticks: { 
-                            font: { size: 6, weight: 'bold' },
+                            font: { 
+                                size: 10,
+                                weight: '800'
+                            },
+                            color: '#333',
                             maxRotation: 20
                         } 
                     }
