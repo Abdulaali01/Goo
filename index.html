@@ -287,10 +287,6 @@ body {
     direction: rtl;
 }
 
-.map-label-name {
-    color: #333;
-}
-
 .map-label-count {
     background: var(--district-color);
     color: white;
@@ -301,10 +297,10 @@ body {
     text-align: center;
 }
 
-/* INCREASED HEIGHT EXPORT - 1200px instead of 980px */
+/* Export styles - 1500px height */
 .export-container {
     width: 1920px !important;
-    height: 1200px !important; /* INCREASED from 980px */
+    height: 1500px !important;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     display: grid !important;
     grid-template-columns: 680px 1fr !important;
@@ -323,12 +319,11 @@ body {
     height: 100% !important;
 }
 
-/* Adjusted row heights for 1200px */
 .export-top-row {
     display: grid !important;
     grid-template-columns: 220px 1fr !important;
     gap: 15px !important;
-    height: 45% !important; /* Reduced to make room for districts */
+    height: 35% !important;
 }
 
 .export-legend {
@@ -336,13 +331,6 @@ body {
     border-radius: 16px;
     padding: 15px;
     overflow: hidden;
-}
-
-.export-legend .card-title {
-    font-size: 16px;
-    font-weight: 800;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
 }
 
 .export-chart-stats {
@@ -353,16 +341,9 @@ body {
     flex-direction: column;
 }
 
-.export-chart-stats .card-title {
-    font-size: 16px;
-    font-weight: 800;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-}
-
 .export-chart-stats .chart-area {
     flex: 1;
-    min-height: 180px;
+    min-height: 150px;
     position: relative;
 }
 
@@ -382,21 +363,8 @@ body {
     text-align: center;
 }
 
-.export-chart-stats .stat-label {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 5px;
-}
-
-.export-chart-stats .stat-value {
-    font-size: 20px;
-    font-weight: 800;
-    color: #667eea;
-}
-
-/* INCREASED HEIGHT for districts section */
 .export-districts-compact {
-    height: 55% !important; /* Increased from 45% */
+    height: 40% !important;
     background: white;
     border-radius: 16px;
     padding: 15px;
@@ -404,19 +372,11 @@ body {
     flex-direction: column;
 }
 
-.export-districts-compact .card-title {
-    font-size: 16px;
-    font-weight: 900;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-}
-
-/* 2 rows of 3 charts each */
 .export-districts-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 12px;
+    grid-template-rows: repeat(3, 1fr);
+    gap: 10px;
     flex: 1;
     overflow: hidden;
 }
@@ -424,17 +384,17 @@ body {
 .export-mini-chart {
     background: #f8f9fa;
     border-radius: 10px;
-    padding: 8px;
+    padding: 6px;
     display: flex;
     flex-direction: column;
     min-height: 0;
 }
 
 .export-mini-chart-title {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 800;
     text-align: center;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     padding-bottom: 3px;
     border-bottom: 2px solid #dee2e6;
     white-space: nowrap;
@@ -443,6 +403,21 @@ body {
 }
 
 .export-mini-chart-area {
+    flex: 1;
+    position: relative;
+    min-height: 0;
+}
+
+.export-categories-section {
+    height: 25% !important;
+    background: white;
+    border-radius: 16px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.export-categories-chart {
     flex: 1;
     position: relative;
     min-height: 0;
@@ -462,42 +437,12 @@ body {
     width: 100% !important;
 }
 
-.export-container .original-content {
-    display: none !important;
-}
-
-.export-container ~ .top-bar,
-.export-container ~ .custom-zoom {
-    display: none !important;
-}
-
 body.exporting {
     overflow: hidden !important;
 }
 
 body.exporting .main-container:not(.export-container) {
     display: none !important;
-}
-
-@media (max-width: 1100px) {
-    .stats-section {
-        grid-template-columns: 1fr;
-    }
-    .districts-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .districts-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 480px) {
-    .districts-grid {
-        grid-template-columns: 1fr;
-    }
 }
 </style>
 </head>
@@ -534,7 +479,6 @@ body.exporting .main-container:not(.export-container) {
 
     <div class="map-wrapper" id="mapSection">
         <div id="map"></div>
-
         <div class="custom-zoom">
             <button class="zoom-btn" onclick="map.zoomIn()">+</button>
             <button class="zoom-btn" onclick="map.zoomOut()">−</button>
@@ -542,7 +486,6 @@ body.exporting .main-container:not(.export-container) {
     </div>
 
     <div class="stats-section" id="statsSection">
-
         <div class="card">
             <div class="card-title">🎨 دليل الألوان</div>
             <div id="legendBox" class="legend-container"></div>
@@ -570,14 +513,11 @@ body.exporting .main-container:not(.export-container) {
                 <span class="stat-value" id="topDistrict">-</span>
             </div>
         </div>
-
     </div>
 
     <div class="districts-compact-card" id="districtsCompactCard" style="display: none;">
         <div class="districts-compact-title">🏘️ أعلى 3 أحياء لكل بلدية</div>
-        <div class="districts-grid" id="districtsGrid">
-            <!-- Mini charts will be inserted here -->
-        </div>
+        <div class="districts-grid" id="districtsGrid"></div>
     </div>
 
     <div class="stats-section" id="categorySection">
@@ -625,10 +565,7 @@ function initMap() {
     screenshoter = L.simpleMapScreenshoter({
         screenName: 'خريطة_البلديات',
         hidden: true,
-        hideElementsWithSelectors: ['.custom-zoom'],
-        caption: function() {
-            return 'تحليل البلديات - ' + new Date().toLocaleDateString('ar-SA');
-        }
+        hideElementsWithSelectors: ['.custom-zoom']
     }).addTo(map);
 }
 
@@ -653,7 +590,6 @@ function processRows(rows) {
     allMunicipalities.clear();
     allDates.clear();
     categoryData = {};
-
     let municipalityDistricts = {};
 
     for (let i = 1; i < rows.length; i++) {
@@ -845,10 +781,7 @@ function drawCompactDistrictsCharts() {
                         anchor: 'end',
                         align: 'top',
                         color: '#000',
-                        font: { 
-                            weight: '900',
-                            size: 13
-                        },
+                        font: { weight: '900', size: 13 },
                         formatter: (value) => value,
                         offset: 2
                     }
@@ -857,24 +790,11 @@ function drawCompactDistrictsCharts() {
                     y: { 
                         beginAtZero: true, 
                         grid: { color: 'rgba(0,0,0,0.1)' },
-                        ticks: { 
-                            font: { 
-                                size: 11,
-                                weight: '800'
-                            },
-                            color: '#000'
-                        }
+                        ticks: { font: { size: 11, weight: '800' }, color: '#000' }
                     },
                     x: { 
                         grid: { display: false }, 
-                        ticks: { 
-                            font: { 
-                                size: 11,
-                                weight: '800'
-                            },
-                            color: '#333',
-                            maxRotation: 25
-                        } 
+                        ticks: { font: { size: 11, weight: '800' }, color: '#333', maxRotation: 25 } 
                     }
                 }
             }
@@ -902,17 +822,14 @@ function draw() {
     visibleMunicipalities.forEach((m) => {
         if (m.points.length >= 3) {
             let hull = convexHull(m.points);
-
             let poly = L.polygon(hull.map(p => [p.lat, p.lng]), {
                 color: m.color,
                 fillColor: m.color,
                 fillOpacity: 0.25,
                 weight: 4
             }).addTo(map);
-
             poly.on('mouseover', function() { this.setStyle({ fillOpacity: 0.45, weight: 6 }); });
             poly.on('mouseout', function() { this.setStyle({ fillOpacity: 0.25, weight: 4 }); });
-
             polygons.push(poly);
         } else if (m.points.length > 0) {
             let circle = L.circleMarker([m.centerLat, m.centerLng], {
@@ -922,7 +839,6 @@ function draw() {
                 fillOpacity: 0.35,
                 weight: 4
             }).addTo(map);
-
             polygons.push(circle);
         }
 
@@ -936,7 +852,6 @@ function draw() {
                 iconAnchor: [20, 20]
             })
         }).addTo(map);
-
         labels.push(label);
     });
 
@@ -998,11 +913,7 @@ function drawChart() {
                 },
                 x: { 
                     grid: { display: false }, 
-                    ticks: { 
-                        maxRotation: 45, 
-                        minRotation: 45, 
-                        font: { size: 11, weight: 'bold' } 
-                    } 
+                    ticks: { maxRotation: 45, minRotation: 45, font: { size: 11, weight: 'bold' } } 
                 }
             }
         }
@@ -1061,7 +972,6 @@ function drawCategoryChart() {
 
 function buildLegend() {
     const container = document.getElementById("legendBox");
-
     container.innerHTML = visibleMunicipalities.slice(0, 10).map((m, index) => `
         <div class="legend-item" onclick="highlightMunicipality('${m.uniqueId}')" title="${escapeHtml(m.municipality)}">
             <div class="legend-color-box" style="background: ${m.color};">${index + 1}</div>
@@ -1101,48 +1011,88 @@ function exportExcel() {
     XLSX.writeFile(wb, "تحليل_البلديات.xlsx");
 }
 
+function clearMapLayers() {
+    polygons.forEach(p => map.removeLayer(p));
+    labels.forEach(l => map.removeLayer(l));
+    polygons = [];
+    labels = [];
+}
+
+function clearAllData() {
+    if (confirm('هل أنت متأكد؟')) location.reload();
+}
+
+function showNotification(message) {
+    const notif = document.createElement('div');
+    notif.style.cssText = `
+        position: fixed; top: 90px; left: 50%; transform: translateX(-50%);
+        background: rgba(0,0,0,0.85); color: white; padding: 15px 30px;
+        border-radius: 30px; font-weight: 600; z-index: 100001;
+        transition: opacity .3s ease;
+    `;
+    notif.textContent = message;
+    document.body.appendChild(notif);
+    setTimeout(() => { 
+        notif.style.opacity = '0'; 
+        setTimeout(() => notif.remove(), 300); 
+    }, 3000);
+}
+
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+// Export function - simplified and fixed
 async function exportSlide() {
     showNotification('⏳ جاري إعداد السلايد...');
 
     try {
         document.body.classList.add('exporting');
 
+        // Create export container
         const exportContainer = document.createElement('div');
         exportContainer.className = 'export-container';
         exportContainer.id = 'exportContainer';
 
+        // Left column
         const leftColumn = document.createElement('div');
         leftColumn.className = 'export-left';
 
+        // Top row
         const topRow = document.createElement('div');
         topRow.className = 'export-top-row';
 
+        // Legend box
         const legendBox = document.createElement('div');
         legendBox.className = 'export-legend';
         legendBox.innerHTML = `
             <div class="card-title">🎨 دليل الألوان</div>
-            <div class="legend-container" id="exportLegend"></div>
+            <div class="legend-container">${document.getElementById('legendBox').innerHTML}</div>
         `;
 
+        // Chart stats box
         const chartStatsBox = document.createElement('div');
         chartStatsBox.className = 'export-chart-stats';
         chartStatsBox.innerHTML = `
             <div class="card-title">📊 توزيع البلاغات بالبلديات</div>
-            <div class="chart-area">
-                <canvas id="exportChart"></canvas>
-            </div>
+            <div class="chart-area"><canvas id="exportChart"></canvas></div>
             <div class="stats-area">
                 <div class="stat-box">
                     <div class="stat-label">إجمالي البلاغات</div>
-                    <div class="stat-value" id="exportTotalReports">0</div>
+                    <div class="stat-value">${document.getElementById('totalReports').textContent}</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">عدد البلديات</div>
-                    <div class="stat-value" id="exportTotalDistricts">0</div>
+                    <div class="stat-value">${document.getElementById('totalDistricts').textContent}</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">الأعلى بلاغات</div>
-                    <div class="stat-value" id="exportTopDistrict">-</div>
+                    <div class="stat-value">${document.getElementById('topDistrict').textContent}</div>
                 </div>
             </div>
         `;
@@ -1150,16 +1100,27 @@ async function exportSlide() {
         topRow.appendChild(legendBox);
         topRow.appendChild(chartStatsBox);
 
-        const districtsCompactBox = document.createElement('div');
-        districtsCompactBox.className = 'export-districts-compact';
-        districtsCompactBox.innerHTML = `
+        // Districts box
+        const districtsBox = document.createElement('div');
+        districtsBox.className = 'export-districts-compact';
+        districtsBox.innerHTML = `
             <div class="card-title">🏘️ أعلى 3 أحياء لكل بلدية</div>
             <div class="export-districts-grid" id="exportDistrictsGrid"></div>
         `;
 
-        leftColumn.appendChild(topRow);
-        leftColumn.appendChild(districtsCompactBox);
+        // Categories box
+        const categoriesBox = document.createElement('div');
+        categoriesBox.className = 'export-categories-section';
+        categoriesBox.innerHTML = `
+            <div class="card-title">📊 توزيع التصنيفات</div>
+            <div class="export-categories-chart"><canvas id="exportCategoriesChart"></canvas></div>
+        `;
 
+        leftColumn.appendChild(topRow);
+        leftColumn.appendChild(districtsBox);
+        leftColumn.appendChild(categoriesBox);
+
+        // Map box
         const mapBox = document.createElement('div');
         mapBox.className = 'export-map';
         mapBox.innerHTML = '<div id="mapExport"></div>';
@@ -1168,16 +1129,13 @@ async function exportSlide() {
         exportContainer.appendChild(mapBox);
         document.body.appendChild(exportContainer);
 
-        document.getElementById('exportTotalReports').textContent = document.getElementById('totalReports').textContent;
-        document.getElementById('exportTotalDistricts').textContent = document.getElementById('totalDistricts').textContent;
-        document.getElementById('exportTopDistrict').textContent = document.getElementById('topDistrict').textContent;
+        // Draw mini charts for 8 municipalities
+        drawExportDistricts();
 
-        document.getElementById('exportLegend').innerHTML = document.getElementById('legendBox').innerHTML;
-
-        drawExportCompactDistricts();
-
+        // Wait for map to initialize
         await new Promise(resolve => setTimeout(resolve, 300));
 
+        // Initialize export map
         const exportMap = L.map('mapExport', {
             zoomControl: false,
             attributionControl: false,
@@ -1189,10 +1147,10 @@ async function exportSlide() {
             crossOrigin: true
         }).addTo(exportMap);
 
+        // Add polygons to export map
         visibleMunicipalities.forEach((m) => {
             if (m.points.length >= 3) {
                 let hull = convexHull(m.points);
-
                 L.polygon(hull.map(p => [p.lat, p.lng]), {
                     color: m.color,
                     fillColor: m.color,
@@ -1221,15 +1179,19 @@ async function exportSlide() {
             }).addTo(exportMap);
         });
 
-        await new Promise(resolve => setTimeout(resolve, 1800));
+        // Wait for tiles to load
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
-        drawExportCharts();
+        // Draw main charts
+        drawExportMainChart();
+        drawExportCategoriesChart();
+
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        // INCREASED canvas height to 1200px
+        // Capture screenshot
         const canvas = await html2canvas(exportContainer, {
             width: 1920,
-            height: 1200, /* INCREASED from 980 */
+            height: 1500,
             scale: 1,
             useCORS: true,
             allowTaint: true,
@@ -1237,18 +1199,21 @@ async function exportSlide() {
             logging: false
         });
 
+        // Create final canvas with header
         const finalCanvas = document.createElement('canvas');
         const ctx = finalCanvas.getContext('2d');
 
         finalCanvas.width = 1920;
-        finalCanvas.height = 1300; /* INCREASED from 1080 */
+        finalCanvas.height = 1600;
 
+        // Draw header background
         const gradient = ctx.createLinearGradient(0, 0, 0, 100);
         gradient.addColorStop(0, '#667eea');
         gradient.addColorStop(1, '#764ba2');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, 1920, 100);
 
+        // Draw header text
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 44px "Segoe UI", Tahoma, Arial';
         ctx.textAlign = 'center';
@@ -1260,8 +1225,10 @@ async function exportSlide() {
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
         }), 960, 75);
 
+        // Draw main content
         ctx.drawImage(canvas, 0, 100);
 
+        // Save file
         finalCanvas.toBlob(blob => {
             saveAs(blob, `تقرير_البلديات_${new Date().toLocaleDateString('ar-SA')}.png`);
             showNotification('✅ تم تصدير السلايد بنجاح!');
@@ -1270,7 +1237,7 @@ async function exportSlide() {
         }, 'image/png');
 
     } catch (err) {
-        console.error(err);
+        console.error('Export error:', err);
         alert('حدث خطأ: ' + err.message);
         document.body.classList.remove('exporting');
         const exportContainer = document.getElementById('exportContainer');
@@ -1278,12 +1245,12 @@ async function exportSlide() {
     }
 }
 
-function drawExportCompactDistricts() {
+// Draw export districts (8 municipalities)
+function drawExportDistricts() {
     const container = document.getElementById('exportDistrictsGrid');
     if (!container || !window.municipalityDistrictsData) return;
 
-    // Show up to 6 municipalities (2 rows x 3 columns)
-    const limitedMunicipalities = visibleMunicipalities.slice(0, 6);
+    const limitedMunicipalities = visibleMunicipalities.slice(0, 8);
 
     limitedMunicipalities.forEach((municipality, index) => {
         const muniName = municipality.municipality;
@@ -1335,10 +1302,7 @@ function drawExportCompactDistricts() {
                         anchor: 'end',
                         align: 'top',
                         color: '#000',
-                        font: { 
-                            weight: '900',
-                            size: 12
-                        },
+                        font: { weight: '900', size: 11 },
                         formatter: (value) => value,
                         offset: 2
                     }
@@ -1347,24 +1311,11 @@ function drawExportCompactDistricts() {
                     y: { 
                         beginAtZero: true, 
                         grid: { color: 'rgba(0,0,0,0.1)' },
-                        ticks: { 
-                            font: { 
-                                size: 10,
-                                weight: '800'
-                            },
-                            color: '#000'
-                        }
+                        ticks: { font: { size: 9, weight: '800' }, color: '#000' }
                     },
                     x: { 
                         grid: { display: false }, 
-                        ticks: { 
-                            font: { 
-                                size: 10,
-                                weight: '800'
-                            },
-                            color: '#333',
-                            maxRotation: 20
-                        } 
+                        ticks: { font: { size: 9, weight: '800' }, color: '#333', maxRotation: 20 } 
                     }
                 }
             }
@@ -1372,9 +1323,12 @@ function drawExportCompactDistricts() {
     });
 }
 
-function drawExportCharts() {
-    const ctx1 = document.getElementById('exportChart').getContext('2d');
-    new Chart(ctx1, {
+// Draw main export chart
+function drawExportMainChart() {
+    const ctx = document.getElementById('exportChart');
+    if (!ctx) return;
+
+    new Chart(ctx.getContext('2d'), {
         type: 'bar',
         data: {
             labels: visibleMunicipalities.map(d => d.municipality),
@@ -1408,11 +1362,60 @@ function drawExportCharts() {
                 },
                 x: { 
                     grid: { display: false }, 
-                    ticks: { 
-                        maxRotation: 45, 
-                        minRotation: 45, 
-                        font: { size: 9, weight: 'bold' } 
-                    } 
+                    ticks: { maxRotation: 45, minRotation: 45, font: { size: 9, weight: 'bold' } } 
+                }
+            }
+        }
+    });
+}
+
+// Draw export categories chart
+function drawExportCategoriesChart() {
+    const ctx = document.getElementById('exportCategoriesChart');
+    if (!ctx) return;
+
+    const cats = Object.keys(categoryData);
+    const vals = Object.values(categoryData);
+
+    const sorted = cats.map((cat, i) => ({ cat, val: vals[i], color: colors[i % colors.length] }))
+                       .sort((a, b) => b.val - a.val)
+                       .slice(0, 8);
+
+    new Chart(ctx.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: sorted.map(s => s.cat),
+            datasets: [{
+                data: sorted.map(s => s.val),
+                backgroundColor: sorted.map(s => s.color),
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            indexAxis: 'y',
+            plugins: {
+                legend: { display: false },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'right',
+                    color: '#000',
+                    font: { weight: '900', size: 12 },
+                    formatter: (value) => value
+                }
+            },
+            scales: {
+                x: { 
+                    beginAtZero: true, 
+                    grid: { color: 'rgba(0,0,0,0.1)' },
+                    ticks: { font: { size: 10, weight: '800' }, color: '#000' }
+                },
+                y: { 
+                    grid: { display: false }, 
+                    ticks: { font: { size: 11, weight: '800' }, color: '#333' } 
                 }
             }
         }
@@ -1421,7 +1424,6 @@ function drawExportCharts() {
 
 function fitAll() {
     if (visibleMunicipalities.length === 0) return;
-
     let bounds = [];
     visibleMunicipalities.forEach(m => m.points.forEach(p => bounds.push([p.lat, p.lng])));
     if (bounds.length) {
@@ -1429,42 +1431,7 @@ function fitAll() {
     }
 }
 
-function clearMapLayers() {
-    polygons.forEach(p => map.removeLayer(p));
-    labels.forEach(l => map.removeLayer(l));
-    polygons = [];
-    labels = [];
-}
-
-function clearAllData() {
-    if (confirm('هل أنت متأكد؟')) location.reload();
-}
-
-function showNotification(message) {
-    const notif = document.createElement('div');
-    notif.style.cssText = `
-        position: fixed; top: 90px; left: 50%; transform: translateX(-50%);
-        background: rgba(0,0,0,0.85); color: white; padding: 15px 30px;
-        border-radius: 30px; font-weight: 600; z-index: 100001;
-        transition: opacity .3s ease;
-    `;
-    notif.textContent = message;
-    document.body.appendChild(notif);
-    setTimeout(() => { 
-        notif.style.opacity = '0'; 
-        setTimeout(() => notif.remove(), 300); 
-    }, 3000);
-}
-
-function escapeHtml(value) {
-    return String(value ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-
+// Initialize
 initMap();
 </script>
 </body>
