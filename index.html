@@ -523,7 +523,7 @@ body {
     width: 100% !important;
 }
 
-/* تنسيق التصنيفات والجدول في وضع التصدير */
+/* تنسيق التصنيفات والجدول في وضع التصدير - ممدد */
 .export-info-overlay {
     position: absolute;
     bottom: 30px;
@@ -533,8 +533,8 @@ body {
     padding: 25px;
     box-shadow: 0 6px 30px rgba(0,0,0,0.4);
     z-index: 10000;
-    max-width: 1000px;
-    max-height: 550px;
+    width: 1200px; /* تمديد العرض */
+    max-height: 600px; /* تمديد الارتفاع */
     border: 3px solid #667eea;
 }
 
@@ -544,26 +544,10 @@ body {
     align-items: flex-start;
 }
 
-.export-categories-section {
-    flex: 1;
-    min-width: 400px;
-}
-
-.export-categories-section .card-title {
-    font-size: 18px;
-    font-weight: 900;
-    margin-bottom: 12px;
-    padding-bottom: 10px;
-    border-bottom: 3px solid #667eea;
-}
-
-.export-categories-chart {
-    height: 400px;
-    width: 400px;
-}
-
+/* تمديد قسم الجدول */
 .export-monthly-table-section {
-    min-width: 450px;
+    flex: 2; /* أخذ مساحة أكبر */
+    min-width: 700px; /* تمديد العرض */
     border-right: 3px solid #dee2e6;
     padding-right: 25px;
 }
@@ -577,7 +561,7 @@ body {
 }
 
 .export-monthly-table-container {
-    max-height: 400px;
+    max-height: 500px; /* تمديد الارتفاع */
     overflow-y: auto;
 }
 
@@ -597,6 +581,7 @@ body {
     font-size: 12px;
     border: 2px solid #fff;
     white-space: nowrap;
+    min-width: 80px; /* عرض أدنى للأعمدة */
 }
 
 .export-monthly-table td {
@@ -605,6 +590,7 @@ body {
     border: 2px solid #e9ecef;
     font-weight: 900;
     font-size: 12px;
+    min-width: 80px;
 }
 
 .export-monthly-table tr:nth-child(even) {
@@ -616,6 +602,26 @@ body {
     color: white;
     font-weight: 900;
     font-size: 13px;
+    min-width: 100px; /* عرض أكبر لعمود الشهر */
+}
+
+/* تقليل حجم التصنيفات لتوفير مساحة للجدول */
+.export-categories-section {
+    flex: 1;
+    min-width: 300px;
+}
+
+.export-categories-section .card-title {
+    font-size: 18px;
+    font-weight: 900;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #667eea;
+}
+
+.export-categories-chart {
+    height: 450px; /* تقليل الارتفاع */
+    width: 100%;
 }
 
 body.exporting {
@@ -737,7 +743,7 @@ let allMunicipalities = new Set();
 let allDates = new Set();
 let categoryData = {};
 let miniCharts = {};
-let monthlyData = {}; // تخزين البيانات الشهرية
+let monthlyData = {};
 
 const colors = [
     "#e74c3c", "#e67e22", "#f39c12", "#27ae60", "#16a085",
@@ -785,7 +791,7 @@ function processRows(rows) {
     allMunicipalities.clear();
     allDates.clear();
     categoryData = {};
-    monthlyData = {}; // إعادة تعيين البيانات الشهرية
+    monthlyData = {};
     let municipalityDistricts = {};
 
     for (let i = 1; i < rows.length; i++) {
@@ -808,7 +814,6 @@ function processRows(rows) {
         if (!categoryData[category]) categoryData[category] = 0;
         categoryData[category]++;
 
-        // تخزين البيانات الشهرية
         if (!monthlyData[date]) {
             monthlyData[date] = {};
         }
@@ -919,10 +924,9 @@ function applyCurrentFilter() {
     draw();
     drawCategoryChart();
     drawCompactDistrictsCharts();
-    drawMonthlyTable(); // رسم الجدول الشهري
+    drawMonthlyTable();
 }
 
-// دالة إنشاء الجدول الشهري
 function drawMonthlyTable() {
     const container = document.getElementById('monthlyTableContainer');
     if (!container || !monthlyData || visibleMunicipalities.length === 0) {
@@ -930,10 +934,7 @@ function drawMonthlyTable() {
         return;
     }
 
-    // الحصول على الأشهر الفريدة مرتبة
     const months = Object.keys(monthlyData).sort();
-    
-    // الحصول على أسماء البلديات المرئية
     const municipalityNames = visibleMunicipalities.map(m => m.municipality);
 
     if (months.length === 0 || municipalityNames.length === 0) {
@@ -941,17 +942,14 @@ function drawMonthlyTable() {
         return;
     }
 
-    // إنشاء HTML الجدول
     let tableHTML = '<table class="monthly-table"><thead><tr><th class="month-cell">الشهر</th>';
     
-    // إضافة أعمدة البلديات
     municipalityNames.forEach(name => {
         tableHTML += `<th>${escapeHtml(name.substring(0, 12))}${name.length > 12 ? '..' : ''}</th>`;
     });
     
     tableHTML += '</tr></thead><tbody>';
 
-    // إضافة صفوف البيانات
     months.forEach(month => {
         tableHTML += `<tr><td class="month-cell">${escapeHtml(month)}</td>`;
         
@@ -1305,27 +1303,22 @@ function escapeHtml(value) {
         .replace(/'/g, '&#39;');
 }
 
-// Export function
 async function exportSlide() {
     showNotification('⏳ جاري إعداد السلايد...');
 
     try {
         document.body.classList.add('exporting');
 
-        // Create export container
         const exportContainer = document.createElement('div');
         exportContainer.className = 'export-container';
         exportContainer.id = 'exportContainer';
 
-        // Left column
         const leftColumn = document.createElement('div');
         leftColumn.className = 'export-left';
 
-        // Top row
         const topRow = document.createElement('div');
         topRow.className = 'export-top-row';
 
-        // Legend box
         const legendBox = document.createElement('div');
         legendBox.className = 'export-legend';
         legendBox.innerHTML = `
@@ -1333,7 +1326,6 @@ async function exportSlide() {
             <div class="legend-container">${document.getElementById('legendBox').innerHTML}</div>
         `;
 
-        // Chart stats box
         const chartStatsBox = document.createElement('div');
         chartStatsBox.className = 'export-chart-stats';
         chartStatsBox.innerHTML = `
@@ -1358,7 +1350,6 @@ async function exportSlide() {
         topRow.appendChild(legendBox);
         topRow.appendChild(chartStatsBox);
 
-        // Districts box
         const districtsBox = document.createElement('div');
         districtsBox.className = 'export-districts-compact';
         districtsBox.innerHTML = `
@@ -1369,22 +1360,18 @@ async function exportSlide() {
         leftColumn.appendChild(topRow);
         leftColumn.appendChild(districtsBox);
 
-        // Map box مع التصنيفات والجدول داخلها
         const mapBox = document.createElement('div');
         mapBox.className = 'export-map';
         mapBox.innerHTML = `
             <div id="mapExport"></div>
             <div class="export-info-overlay">
                 <div class="export-info-content">
-                    <!-- الجدول الشهري -->
                     <div class="export-monthly-table-section">
                         <div class="card-title">📅 البلاغات الشهرية</div>
                         <div class="export-monthly-table-container" id="exportMonthlyTableContainer">
                             ${generateExportMonthlyTableHTML()}
                         </div>
                     </div>
-                    
-                    <!-- التصنيفات -->
                     <div class="export-categories-section">
                         <div class="card-title">📊 توزيع التصنيفات</div>
                         <div class="export-categories-chart">
@@ -1399,7 +1386,6 @@ async function exportSlide() {
         exportContainer.appendChild(mapBox);
         document.body.appendChild(exportContainer);
 
-        // Initialize export map
         const exportMap = L.map('mapExport', {
             zoomControl: false,
             attributionControl: false,
@@ -1411,7 +1397,6 @@ async function exportSlide() {
             crossOrigin: true
         }).addTo(exportMap);
 
-        // Add polygons to export map
         visibleMunicipalities.forEach((m) => {
             if (m.points.length >= 3) {
                 let hull = convexHull(m.points);
@@ -1442,17 +1427,14 @@ async function exportSlide() {
             }).addTo(exportMap);
         });
 
-        // Wait for tiles to load
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-        // Draw charts
         await drawExportDistricts();
         drawExportMainChart();
         drawExportCategoriesChart();
 
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        // Capture screenshot
         const canvas = await html2canvas(exportContainer, {
             width: 1920,
             height: 1500,
@@ -1463,21 +1445,18 @@ async function exportSlide() {
             logging: false
         });
 
-        // Create final canvas with header
         const finalCanvas = document.createElement('canvas');
         const ctx = finalCanvas.getContext('2d');
 
         finalCanvas.width = 1920;
         finalCanvas.height = 1600;
 
-        // Draw header background
         const gradient = ctx.createLinearGradient(0, 0, 0, 100);
         gradient.addColorStop(0, '#667eea');
         gradient.addColorStop(1, '#764ba2');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, 1920, 100);
 
-        // Draw header text
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 44px "Segoe UI", Tahoma, Arial';
         ctx.textAlign = 'center';
@@ -1489,10 +1468,8 @@ async function exportSlide() {
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
         }), 960, 75);
 
-        // Draw main content
         ctx.drawImage(canvas, 0, 100);
 
-        // Save file
         finalCanvas.toBlob(blob => {
             saveAs(blob, `تقرير_البلديات_${new Date().toLocaleDateString('ar-SA')}.png`);
             showNotification('✅ تم تصدير السلايد بنجاح!');
@@ -1509,7 +1486,6 @@ async function exportSlide() {
     }
 }
 
-// دالة إنشاء HTML الجدول الشهري للتصدير
 function generateExportMonthlyTableHTML() {
     if (!monthlyData || visibleMunicipalities.length === 0) {
         return '';
@@ -1754,7 +1730,6 @@ function fitAll() {
     }
 }
 
-// Initialize
 initMap();
 </script>
 </body>
