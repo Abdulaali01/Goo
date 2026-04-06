@@ -372,30 +372,33 @@ body {
     flex-direction: column;
 }
 
+/* تعديل: تغيير الشبكة لعرض 2 صفوف × 3 أعمدة = 6 بلديات */
 .export-districts-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    gap: 10px;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 12px;
     flex: 1;
     overflow: hidden;
 }
 
+/* تعديل: زيادة حجم المخططات الصغيرة في التصدير */
 .export-mini-chart {
     background: #f8f9fa;
     border-radius: 10px;
-    padding: 6px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     min-height: 0;
+    border: 2px solid #e9ecef;
 }
 
 .export-mini-chart-title {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 800;
     text-align: center;
-    margin-bottom: 4px;
-    padding-bottom: 3px;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
     border-bottom: 2px solid #dee2e6;
     white-space: nowrap;
     overflow: hidden;
@@ -1129,7 +1132,7 @@ async function exportSlide() {
         exportContainer.appendChild(mapBox);
         document.body.appendChild(exportContainer);
 
-        // Draw mini charts for 8 municipalities
+        // Draw mini charts for 6 municipalities (2 rows × 3 columns)
         drawExportDistricts();
 
         // Wait for map to initialize
@@ -1245,12 +1248,13 @@ async function exportSlide() {
     }
 }
 
-// Draw export districts (8 municipalities)
+// تعديل: عرض 6 بلديات فقط (2 صفوف × 3 أعمدة) بدلاً من 8
 function drawExportDistricts() {
     const container = document.getElementById('exportDistrictsGrid');
     if (!container || !window.municipalityDistrictsData) return;
 
-    const limitedMunicipalities = visibleMunicipalities.slice(0, 8);
+    // تعديل: عرض 6 بلديات فقط لضمان عرض كامل
+    const limitedMunicipalities = visibleMunicipalities.slice(0, 6);
 
     limitedMunicipalities.forEach((municipality, index) => {
         const muniName = municipality.municipality;
@@ -1281,14 +1285,15 @@ function drawExportDistricts() {
             adjustColor(municipality.color, -60)
         ];
 
+        // تعديل: زيادة حجم الخط وتحسين العرض
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: sortedDistricts.map(d => d[0].substring(0, 5) + (d[0].length > 5 ? '..' : '')),
+                labels: sortedDistricts.map(d => d[0].substring(0, 6) + (d[0].length > 6 ? '..' : '')),
                 datasets: [{
                     data: sortedDistricts.map(d => d[1]),
                     backgroundColor: chartColors,
-                    borderRadius: 3,
+                    borderRadius: 4,
                     borderSkipped: false,
                 }]
             },
@@ -1302,7 +1307,7 @@ function drawExportDistricts() {
                         anchor: 'end',
                         align: 'top',
                         color: '#000',
-                        font: { weight: '900', size: 11 },
+                        font: { weight: '900', size: 12 },
                         formatter: (value) => value,
                         offset: 2
                     }
@@ -1311,11 +1316,19 @@ function drawExportDistricts() {
                     y: { 
                         beginAtZero: true, 
                         grid: { color: 'rgba(0,0,0,0.1)' },
-                        ticks: { font: { size: 9, weight: '800' }, color: '#000' }
+                        ticks: { 
+                            font: { size: 10, weight: '800' }, 
+                            color: '#000',
+                            maxTicksLimit: 4
+                        }
                     },
                     x: { 
                         grid: { display: false }, 
-                        ticks: { font: { size: 9, weight: '800' }, color: '#333', maxRotation: 20 } 
+                        ticks: { 
+                            font: { size: 10, weight: '800' }, 
+                            color: '#333', 
+                            maxRotation: 25 
+                        } 
                     }
                 }
             }
